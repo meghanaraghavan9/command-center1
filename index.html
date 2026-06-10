@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#f5f0e8">
+<title>Command Center</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#f5f0e8;--surface:#eee8d8;--card:#e8e0cc;--border:rgba(0,0,0,0.1);--text:#1a1a1a;--muted:#777;--muted2:#aaa;--q1:#ef4444;--q2:#3b82f6;--q3:#f59e0b;--q4:#94a3b8;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);}
+nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.nav-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);padding:12px 10px;font-family:'Syne',sans-serif;font-weight:700;font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:color 0.15s,border-color 0.15s;}
+.nav-btn.active{color:var(--text);border-bottom-color:var(--text);}
+.page{display:none;flex:1;overflow-y:auto;padding:20px 16px 100px;}
+.page.active{display:block;}
+.section-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:10px;}
+.section-header h1{font-family:'Syne',sans-serif;font-size:clamp(20px,4vw,30px);font-weight:800;letter-spacing:-0.5px;color:var(--text);}
+.section-header p{color:var(--muted);font-size:12px;margin-top:4px;}
+.btn-primary{background:#1a1a1a;color:#f5f0e8;border:none;border-radius:9px;padding:9px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.btn-ghost{background:rgba(0,0,0,0.06);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;}
+.btn-danger{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#dc2626;border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;}
+.btn-ai{background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(168,85,247,0.15));border:1px solid rgba(99,102,241,0.3);color:#6366f1;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;font-weight:600;}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--muted);flex:1;min-width:70px;}
+.stat strong{display:block;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);line-height:1.1;}
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.search-input{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;font-family:'DM Sans',sans-serif;flex:1;min-width:140px;}
+.search-input::placeholder{color:var(--muted);}
+.filter-select{background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:12px;outline:none;font-family:'DM Sans',sans-serif;}
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.quadrant{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.quadrant-header{padding:10px 14px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;}
+.quadrant-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.quadrant-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text);line-height:1.2;}
+.quadrant-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.quadrant-tasks{padding:8px 14px 10px;}
+.q-task{display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04);cursor:pointer;}
+.q-task:last-child{border-bottom:none;}
+.q-task.done .q-task-text{text-decoration:line-through;color:var(--muted2);}
+.q-chk{width:13px;height:13px;border-radius:3px;border:1.5px solid rgba(0,0,0,0.2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.q-task.done .q-chk{background:rgba(0,0,0,0.1);border-color:transparent;}
+.q-task.done .q-chk::after{content:'✓';font-size:8px;color:var(--muted);}
+.q-task-text{font-size:11.5px;line-height:1.35;color:#2a2a2a;}
+.q-empty{font-size:11px;color:var(--muted2);padding:8px 0;text-align:center;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.bucket{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.bucket-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.bucket-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;flex:1;color:var(--text);}
+.bucket-count{font-size:10px;color:var(--muted);background:rgba(0,0,0,0.06);padding:2px 7px;border-radius:7px;}
+.icon-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;line-height:1;}
+.tasks-list{padding:8px 16px 12px;}
+.task-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.task-row:last-child{border-bottom:none;}
+.task-row.done .task-text{text-decoration:line-through;color:var(--muted2);}
+.chk{width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;}
+.task-row.done .chk{background:rgba(0,0,0,0.1);border-color:transparent;}
+.task-row.done .chk::after{content:'✓';font-size:9px;color:var(--muted);}
+.task-body{flex:1;min-width:0;}
+.task-text{font-size:12.5px;line-height:1.4;color:#2a2a2a;cursor:pointer;}
+.task-meta{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;}
+.priority-tag{font-size:10px;font-weight:600;padding:1px 6px;border-radius:5px;}
+.p-q1{background:rgba(239,68,68,0.12);color:#dc2626;}
+.p-q2{background:rgba(59,130,246,0.12);color:#2563eb;}
+.p-q3{background:rgba(245,158,11,0.12);color:#d97706;}
+.p-q4{background:rgba(148,163,184,0.15);color:#64748b;}
+.task-due{font-size:10px;color:var(--muted);}
+.task-due.overdue{color:#dc2626;}
+.task-due.due-today{color:#d97706;}
+.task-due.due-soon{color:#059669;}
+.task-row-actions{display:flex;gap:4px;align-items:flex-start;flex-shrink:0;opacity:0;transition:opacity 0.15s;}
+.task-row:hover .task-row-actions{opacity:1;}
+.add-task-row{display:flex;align-items:center;gap:8px;padding:8px 0 2px;border-top:1px solid rgba(0,0,0,0.06);margin-top:4px;}
+.add-task-input{background:transparent;border:none;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;flex:1;}
+.add-task-input::placeholder{color:var(--muted2);}
+.today-section{margin-bottom:20px;}
+.today-section h2{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.today-task{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.today-task-body{flex:1;min-width:0;}
+.today-task-text{font-size:13px;color:#2a2a2a;line-height:1.4;}
+.today-task-meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:center;}
+.today-bucket-tag{font-size:10px;padding:1px 7px;border-radius:5px;color:#fff;font-weight:600;}
+.focus-empty{text-align:center;color:var(--muted);padding:24px;font-size:13px;line-height:1.6;}
+.weekly-banner{background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(168,85,247,0.08));border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:14px 16px;margin-bottom:16px;}
+.weekly-banner h2{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;margin-bottom:3px;color:var(--text);}
+.weekly-banner p{font-size:12px;color:var(--muted);}
+.contacts-list{display:flex;flex-direction:column;gap:0;}
+.contact-row{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:10px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(0,0,0,0.06);}
+.contact-row:hover,.contact-row.selected{background:rgba(0,0,0,0.04);}
+.avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;}
+.contact-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#1a1a1a;}
+.overdue-badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:5px;margin-left:6px;}
+.freshness{font-size:11px;font-weight:500;text-align:right;flex-shrink:0;}
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:flex-end;}
+.detail-overlay.open{display:flex;}
+.detail-panel{background:#faf6ee;border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:20px 18px 48px;border-top:1px solid var(--border);}
+.detail-handle{width:36px;height:4px;background:rgba(0,0,0,0.15);border-radius:2px;margin:0 auto 18px;}
+.convo-card{background:#fff;border:1px solid var(--border);border-radius:11px;padding:13px 15px;margin-bottom:9px;}
+.convo-card-date{font-size:11px;color:var(--muted);margin-bottom:5px;}
+.convo-card-topic{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;margin-bottom:8px;color:var(--text);}
+.convo-card-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.convo-card-text{font-size:12.5px;color:#2a2a2a;line-height:1.5;margin-bottom:8px;}
+.convo-card-takeaway{font-size:12.5px;color:#92400e;line-height:1.5;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#faf6ee;border:1px solid var(--border);border-radius:16px;padding:22px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;}
+.modal h2{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:16px;color:var(--text);}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:8px;padding:8px 11px;color:#1a1a1a;font-size:13px;outline:none;font-family:'DM Sans',sans-serif;}
+.form-input::placeholder,.form-textarea::placeholder{color:#aaa;}
+.form-textarea{resize:vertical;color:#1a1a1a;}
+.form-row{display:flex;gap:8px;}
+.form-row .form-group{flex:1;}
+.modal-actions{display:flex;gap:8px;margin-top:16px;}
+.btn-cancel{flex:1;background:rgba(0,0,0,0.05);border:1px solid var(--border);color:var(--muted);border-radius:9px;padding:10px;font-size:13px;cursor:pointer;}
+.btn-save{flex:2;background:#1a1a1a;color:#f5f0e8;border:none;border-radius:9px;padding:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.ai-processing{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:8px;padding:12px;margin-top:10px;font-size:12px;color:#6366f1;text-align:center;display:none;}
+.settings-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.settings-section h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.archive-item{display:flex;align-items:flex-start;gap:8px;padding:8px 14px;border-radius:8px;background:rgba(0,0,0,0.03);margin-bottom:4px;}
+.archive-text{font-size:12px;color:var(--muted);text-decoration:line-through;flex:1;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;border-radius:12px;padding:12px 18px;font-size:13px;color:#f5f0e8;z-index:999;transition:transform 0.3s ease;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.c-personal{background:#f97316;}.c-mclient{background:#3b82f6;}.c-jclient{background:#a855f7;}
+.c-sclient{background:#10b981;}.c-moclient{background:#f59e0b;}.c-pcec{background:#ec4899;}
+.c-admin{background:#06b6d4;}.c-learning{background:#64748b;}.c-internal{background:#64748b;}.c-other{background:#94a3b8;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp 0.25s ease both;}
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;gap:16px;}
+.loading-screen h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);}
+.loading-screen p{color:var(--muted);font-size:13px;text-align:center;padding:0 32px;}
+.spinner{width:32px;height:32px;border:2px solid rgba(0,0,0,0.1);border-top-color:#1a1a1a;border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="loading-screen" id="loading-screen"><div class="spinner"></div><h2>Command Center</h2><p id="loading-msg">Connecting to database…</p></div>
+<nav>
+  <button class="nav-btn active" onclick="showPage('today',this)">Today</button>
+  <button class="nav-btn" onclick="showPage('tasks',this)">Tasks</button>
+  <button class="nav-btn" onclick="showPage('done',this)">Done</button>
+  <button class="nav-btn" onclick="showPage('contacts',this)">Contacts</button>
+  <button class="nav-btn" onclick="showPage('settings',this)">⚙️</button>
+</nav>
+<div class="page active" id="page-today">
+  <div class="section-header"><div><h1>Today</h1><p id="today-date"></p></div><button class="btn-primary" onclick="openFocusModal()">Set Focus</button></div>
+  <div class="weekly-banner"><h2>📋 This Week's Focus</h2><p id="focus-summary">Pin up to 10 tasks as your weekly focus</p></div>
+  <div id="today-overdue-section" class="today-section" style="display:none"><h2>🔴 Overdue</h2><div id="today-overdue-list"></div></div>
+  <div id="today-due-section" class="today-section" style="display:none"><h2>📅 Due Today</h2><div id="today-due-list"></div></div>
+  <div class="today-section">
+    <h2>⭐ Weekly Focus — Eisenhower View</h2>
+    <div class="matrix">
+      <div class="quadrant"><div class="quadrant-header"><div class="quadrant-dot" style="background:#ef4444"></div><div><div class="quadrant-title">Do First</div><div class="quadrant-sub">Urgent & Important</div></div></div><div class="quadrant-tasks" id="q1-tasks"><div class="q-empty">None</div></div></div>
+      <div class="quadrant"><div class="quadrant-header"><div class="quadrant-dot" style="background:#3b82f6"></div><div><div class="quadrant-title">Schedule</div><div class="quadrant-sub">Important, Not Urgent</div></div></div><div class="quadrant-tasks" id="q2-tasks"><div class="q-empty">None</div></div></div>
+      <div class="quadrant"><div class="quadrant-header"><div class="quadrant-dot" style="background:#f59e0b"></div><div><div class="quadrant-title">Delegate</div><div class="quadrant-sub">Urgent, Not Important</div></div></div><div class="quadrant-tasks" id="q3-tasks"><div class="q-empty">None</div></div></div>
+      <div class="quadrant"><div class="quadrant-header"><div class="quadrant-dot" style="background:#94a3b8"></div><div><div class="quadrant-title">Drop / Later</div><div class="quadrant-sub">Low Priority</div></div></div><div class="quadrant-tasks" id="q4-tasks"><div class="q-empty">None</div></div></div>
+    </div>
+  </div>
+  <div id="today-contacts-section" class="today-section" style="display:none"><h2>👤 Reconnect With</h2><div id="today-contacts-list"></div></div>
+</div>
+<div class="page" id="page-tasks">
+  <div class="section-header"><div><h1>Tasks</h1><p id="tasks-subtitle"></p></div><div style="display:flex;gap:8px;"><button class="btn-ghost" onclick="openAddBucketModal()">+ Bucket</button><button class="btn-primary" onclick="openAddTaskModal()">+ Task</button></div></div>
+  <div class="search-bar"><input class="search-input" id="task-search" placeholder="Search tasks…" oninput="renderTasks()"><select class="filter-select" id="task-filter-bucket" onchange="renderTasks()"><option value="All">All Buckets</option></select><select class="filter-select" id="task-filter-priority" onchange="renderTasks()"><option value="All">All</option><option value="q1">🔴 Do First</option><option value="q2">🔵 Schedule</option><option value="q3">🟡 Delegate</option><option value="q4">⚪ Low</option><option value="overdue">⏰ Overdue</option></select></div>
+  <div class="stats"><div class="stat"><strong id="stat-total">0</strong>Total</div><div class="stat"><strong id="stat-done">0</strong>Done</div><div class="stat"><strong id="stat-q1">0</strong>Do First</div><div class="stat"><strong id="stat-overdue">0</strong>Overdue</div></div>
+  <div class="grid" id="task-grid"></div>
+</div>
+<div class="page" id="page-done">
+  <div class="section-header"><div><h1>Completed</h1><p id="done-subtitle"></p></div><button class="btn-danger" onclick="clearAllDone()">Clear All</button></div>
+  <div id="done-list"></div>
+</div>
+<div class="page" id="page-contacts">
+  <div class="section-header"><div><h1>Contacts</h1><p id="contacts-subtitle"></p></div><button class="btn-primary" onclick="openAddContactModal()">+ Person</button></div>
+  <div class="search-bar"><input class="search-input" id="contact-search" placeholder="Search…" oninput="renderContacts()"><select class="filter-select" id="contact-filter-client" onchange="renderContacts()"><option value="All">All</option><option>M Client</option><option>J Client</option><option>S Client</option><option>MO Client</option><option>PCEC</option><option>Personal</option><option>Internal</option><option>Other</option></select><select class="filter-select" id="contact-filter-status" onchange="renderContacts()"><option value="All">All</option><option value="overdue">🔴 Overdue</option><option value="ok">✅ OK</option></select></div>
+  <div id="contacts-list" class="contacts-list"></div>
+</div>
+<div class="page" id="page-settings">
+  <div class="section-header"><div><h1>Settings</h1><p>Email digest & preferences</p></div></div>
+  <div class="settings-section">
+    <h3>📧 Daily Email Digest</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Sent at 10pm daily with overdue tasks, due in 3 days, and your weekly focus.</p>
+    <div class="form-group"><label class="form-label">Resend API Key</label><input class="form-input" id="settings-resend-key" type="password" placeholder="re_xxxxxxxxxxxxxxxx"></div>
+    <div class="form-group"><label class="form-label">Email Address 1</label><input class="form-input" id="settings-email1" type="email" placeholder="you@email.com"></div>
+    <div class="form-group"><label class="form-label">Email Address 2 (optional)</label><input class="form-input" id="settings-email2" type="email" placeholder="you@email.com"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="btn-primary" onclick="saveSettings()" style="flex:2;">Save Settings</button>
+      <button class="btn-ghost" onclick="sendTestDigest()" style="flex:1;">Test Email</button>
+    </div>
+    <div id="settings-status" style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center;"></div>
+  </div>
+  <div class="settings-section">
+    <h3>ℹ️ Priority Guide</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:10px;"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444;flex-shrink:0;"></div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Do First — Urgent & Important</div><div style="font-size:11px;color:var(--muted);">Deadlines, crises, time-sensitive critical work</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;"><div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;flex-shrink:0;"></div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Schedule — Important, Not Urgent</div><div style="font-size:11px;color:var(--muted);">Strategic work, relationship building, planning</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;"><div style="width:10px;height:10px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Delegate — Urgent, Not Important</div><div style="font-size:11px;color:var(--muted);">Interruptions, some meetings, some emails</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px;"><div style="width:10px;height:10px;border-radius:50%;background:#94a3b8;flex-shrink:0;"></div><div><div style="font-size:13px;font-weight:600;color:var(--text);">Drop / Later — Low Priority</div><div style="font-size:11px;color:var(--muted);">Busy work, nice-to-haves, time wasters</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetailOverlay(event)"><div class="detail-panel"><div class="detail-handle"></div><div id="detail-content"></div></div></div>
+<div class="modal-overlay" id="modal-task"><div class="modal"><h2 id="task-modal-title">Add Task</h2><input type="hidden" id="edit-task-id"><input type="hidden" id="edit-task-bucket"><div class="form-group"><label class="form-label">Task</label><input class="form-input" id="task-text" placeholder="What needs to be done?"></div><div class="form-row"><div class="form-group"><label class="form-label">Bucket</label><select class="form-select" id="task-bucket-select"></select></div><div class="form-group"><label class="form-label">Priority</label><select class="form-select" id="task-tag"><option value="">None</option><option value="q1">🔴 Do First</option><option value="q2">🔵 Schedule</option><option value="q3">🟡 Delegate</option><option value="q4">⚪ Low Priority</option></select></div></div><div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" id="task-due"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-task')">Cancel</button><button class="btn-save" onclick="saveTask()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-add-bucket"><div class="modal"><h2>Add Bucket</h2><div class="form-group"><label class="form-label">Name</label><input class="form-input" id="new-bucket-name" placeholder="e.g. New Client"></div><div class="form-group"><label class="form-label">Color</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"><div class="color-swatch" data-color="#6366f1" style="width:28px;height:28px;border-radius:50%;background:#6366f1;cursor:pointer;border:2px solid #333;"></div><div class="color-swatch" data-color="#14b8a6" style="width:28px;height:28px;border-radius:50%;background:#14b8a6;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#f43f5e" style="width:28px;height:28px;border-radius:50%;background:#f43f5e;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#8b5cf6" style="width:28px;height:28px;border-radius:50%;background:#8b5cf6;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#0ea5e9" style="width:28px;height:28px;border-radius:50%;background:#0ea5e9;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#84cc16" style="width:28px;height:28px;border-radius:50%;background:#84cc16;cursor:pointer;border:2px solid transparent;"></div></div></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-add-bucket')">Cancel</button><button class="btn-save" onclick="saveNewBucket()">Add</button></div></div></div>
+<div class="modal-overlay" id="modal-contact"><div class="modal"><h2 id="contact-modal-title">Add Person</h2><input type="hidden" id="edit-contact-id"><div class="form-group"><label class="form-label">Name</label><input class="form-input" id="contact-name" placeholder="Full name"></div><div class="form-row"><div class="form-group"><label class="form-label">Client</label><select class="form-select" id="contact-client"><option>M Client</option><option>J Client</option><option>S Client</option><option>MO Client</option><option>PCEC</option><option>Personal</option><option>Internal</option><option>Other</option></select></div><div class="form-group"><label class="form-label">Role</label><input class="form-input" id="contact-role" placeholder="e.g. CFO"></div></div><div class="form-group"><label class="form-label">Reconnect Cadence</label><select class="form-select" id="contact-cadence"><option value="7">Weekly</option><option value="14" selected>Bi-weekly</option><option value="30">Monthly</option><option value="90">Quarterly</option><option value="">As needed</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-contact')">Cancel</button><button class="btn-save" onclick="saveContact()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-convo"><div class="modal"><h2>Log Conversation</h2><input type="hidden" id="convo-contact-id"><div class="form-row"><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="convo-date"></div><div class="form-group"><label class="form-label">Topic</label><input class="form-input" id="convo-topic" placeholder="What was discussed?"></div></div><div class="form-group"><label class="form-label">🎙️ Brain Dump</label><textarea class="form-textarea" id="convo-dump" rows="4" placeholder="Speak or type freely — what happened? Don't worry about structure, just dump it all here and AI will clean it up…"></textarea><button class="btn-ai" style="width:100%;margin-top:8px;" onclick="aiRefineConvo()">✨ Refine with AI</button><div class="ai-processing" id="ai-processing">✨ Claude is summarizing your notes…</div></div><div class="form-group"><label class="form-label">Summary</label><textarea class="form-textarea" id="convo-summary" rows="3" placeholder="AI will fill this in, or type manually…"></textarea></div><div class="form-group"><label class="form-label" style="color:#d97706;">Key Takeaways</label><textarea class="form-textarea" id="convo-takeaways" rows="2" placeholder="AI will fill this in, or type manually…"></textarea></div><div class="form-group"><label class="form-label" style="color:#2563eb;">➕ Create Task From This</label><input class="form-input" id="convo-task" placeholder="Optional next step…"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-convo')">Cancel</button><button class="btn-save" onclick="saveConversation()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-focus"><div class="modal"><h2>Set Weekly Focus</h2><p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Pick up to 10 tasks. They appear in your Eisenhower matrix on Today.</p><div id="focus-picker-list" style="max-height:50vh;overflow-y:auto;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-focus')">Cancel</button><button class="btn-save" onclick="saveFocus()">Save Focus</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const SUPA_URL='https://ejcgnnwyyfjyqzhvzxne.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqY2dubnd5eWZqeXF6aHZ6eG5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDcyMjgsImV4cCI6MjA5NjUyMzIyOH0.kFMN7i_8VWezlKSL3io1Csfa3scDAezqGTCNaRzti0g';
+const H={'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'};
+async function db(method,table,body=null,query=''){const r=await fetch(`${SUPA_URL}/rest/v1/${table}${query}`,{method,headers:H,body:body?JSON.stringify(body):null});if(!r.ok){const e=await r.text();throw new Error(table+': '+e);}return r.status===204?null:await r.json();}
+const GET=(table,q='')=>db('GET',table,null,q);
+const POST=(table,body)=>db('POST',table,body);
+const PATCH=(table,body,q)=>db('PATCH',table,body,q);
+const DEL=(table,q)=>db('DELETE',table,null,q);
+const CLIENT_COLORS={'M Client':'#3b82f6','J Client':'#a855f7','S Client':'#10b981','MO Client':'#f59e0b','PCEC':'#ec4899','Personal':'#f97316','Internal':'#64748b','Other':'#94a3b8'};
+const CLIENT_CLASS={'M Client':'c-mclient','J Client':'c-jclient','S Client':'c-sclient','MO Client':'c-moclient','PCEC':'c-pcec','Personal':'c-personal','Internal':'c-internal','Other':'c-other'};
+const PRIORITY_CONFIG={q1:{label:'Do First',emoji:'🔴',color:'#ef4444',cls:'p-q1'},q2:{label:'Schedule',emoji:'🔵',color:'#3b82f6',cls:'p-q2'},q3:{label:'Delegate',emoji:'🟡',color:'#f59e0b',cls:'p-q3'},q4:{label:'Low',emoji:'⚪',color:'#94a3b8',cls:'p-q4'}};
+let buckets=[],contacts=[],focusTaskIds=[],selectedContactId=null,selectedBucketColor='#6366f1',tempFocusIds=[];
+let settings={resendKey:'',email1:'',email2:''};
+const SB=[{id:'personal',label:'Personal',color:'#f97316',position:0},{id:'mclient',label:'M Client',color:'#3b82f6',position:1},{id:'jclient',label:'J Client',color:'#a855f7',position:2},{id:'sclient',label:'S Client',color:'#10b981',position:3},{id:'moclient',label:'MO Client',color:'#f59e0b',position:4},{id:'pcec',label:'PCEC',color:'#ec4899',position:5},{id:'admin',label:'Admin & Relationships',color:'#06b6d4',position:6},{id:'learning',label:'Learning & Tools',color:'#64748b',position:7}];
+const ST=[
+{id:'p1',bucket_id:'personal',text:'Complete H1B renewal application',tag:'q1',done:false,due:'2026-06-15',position:0},
+{id:'p2',bucket_id:'personal',text:'Start looking for H1B appointment dates ASAP',tag:'q1',done:false,due:'2026-06-10',position:1},
+{id:'p3',bucket_id:'personal',text:'Research rental options in Bangalore for mom',tag:'q2',done:false,due:'',position:2},
+{id:'p4',bucket_id:'personal',text:'Organize study room before guests end of June',tag:'q2',done:false,due:'2026-06-28',position:3},
+{id:'p5',bucket_id:'personal',text:'Declutter living room and main bedroom',tag:'q4',done:false,due:'',position:4},
+{id:'m1',bucket_id:'mclient',text:'Finalize SOW and send to lawyers',tag:'q1',done:false,due:'2026-06-09',position:0},
+{id:'m2',bucket_id:'mclient',text:'Get SOW signed before June 15 start',tag:'q1',done:false,due:'2026-06-14',position:1},
+{id:'m3',bucket_id:'mclient',text:'Reserve dinner spot for Tuesday ask EA',tag:'q1',done:false,due:'2026-06-09',position:2},
+{id:'m4',bucket_id:'mclient',text:'Finalize workshop preparation for June 10',tag:'q1',done:false,due:'2026-06-09',position:3},
+{id:'m5',bucket_id:'mclient',text:'Follow up with Chloe confirm workshop output document',tag:'q2',done:false,due:'2026-06-09',position:4},
+{id:'m6',bucket_id:'mclient',text:'Build clear run-of-show plan for June 10 workshop',tag:'q2',done:false,due:'2026-06-09',position:5},
+{id:'m7',bucket_id:'mclient',text:'Clarify roles for Jean and Bjorn for June 10 session',tag:'q2',done:false,due:'2026-06-09',position:6},
+{id:'j1',bucket_id:'jclient',text:'Complete and refine SOW get signed off',tag:'q1',done:false,due:'2026-06-14',position:0},
+{id:'j2',bucket_id:'jclient',text:'Get team on the ground',tag:'q2',done:false,due:'',position:1},
+{id:'j3',bucket_id:'jclient',text:'Follow up on Bursal visa for travel',tag:'q2',done:false,due:'',position:2},
+{id:'j4',bucket_id:'jclient',text:'Check with lawyers OK to travel given July 1 stamp expiry',tag:'q1',done:false,due:'2026-06-10',position:3},
+{id:'j5',bucket_id:'jclient',text:'Align governance doc on one page for Tuesday session with Nishia',tag:'q1',done:false,due:'2026-06-09',position:4},
+{id:'j6',bucket_id:'jclient',text:'Capture all deliverables for handover to Suzanne',tag:'q2',done:false,due:'',position:5},
+{id:'j7',bucket_id:'jclient',text:'Set up time with Sandeep ASAP next steps and governance',tag:'q1',done:false,due:'2026-06-09',position:6},
+{id:'j8',bucket_id:'jclient',text:'Finalize contract AI output and align internal stakeholders to Kate',tag:'q2',done:false,due:'',position:7},
+{id:'j9',bucket_id:'jclient',text:'Schedule CFO EA session 1 Finance team feedback',tag:'q2',done:false,due:'',position:8},
+{id:'j10',bucket_id:'jclient',text:'Schedule CFO EA session 2 Art of possible AI in finance',tag:'q2',done:false,due:'',position:9},
+{id:'j11',bucket_id:'jclient',text:'Schedule art of possible AI session for supply chain team',tag:'q2',done:false,due:'',position:10},
+{id:'s1',bucket_id:'sclient',text:'Update proposal to include proactive quality program',tag:'q2',done:false,due:'',position:0},
+{id:'s2',bucket_id:'sclient',text:'Pull supporting info from others to strengthen proposal',tag:'q2',done:false,due:'',position:1},
+{id:'s3',bucket_id:'sclient',text:'Get time with Philippe via Siselle',tag:'q3',done:false,due:'',position:2},
+{id:'mo1',bucket_id:'moclient',text:'Reach out to Kiran schedule a connect',tag:'q3',done:false,due:'',position:0},
+{id:'pc1',bucket_id:'pcec',text:'Reach out to Wolf with Jean in the loop healthcare',tag:'q2',done:false,due:'',position:0},
+{id:'pc2',bucket_id:'pcec',text:'Reach out to LK',tag:'q3',done:false,due:'',position:1},
+{id:'pc3',bucket_id:'pcec',text:'Make sure I am on CST calls',tag:'q3',done:false,due:'',position:2},
+{id:'pc4',bucket_id:'pcec',text:'Build slides summary view of all PCEC and PDC feedback last 3 years',tag:'q2',done:false,due:'',position:3},
+{id:'pc5',bucket_id:'pcec',text:'Create one slide per individual feedback item',tag:'q2',done:false,due:'',position:4},
+{id:'pc6',bucket_id:'pcec',text:'Build back page for all clients LOP etc last 3 years',tag:'q2',done:false,due:'',position:5},
+{id:'pc7',bucket_id:'pcec',text:'Rewrite midpoint memo ensure DGL has all inputs',tag:'q1',done:false,due:'',position:6},
+{id:'pc8',bucket_id:'pcec',text:'Write the book full detail document of everything needed',tag:'q4',done:false,due:'',position:7},
+{id:'ad1',bucket_id:'admin',text:'Build relationship notebook people topics last contact',tag:'q2',done:false,due:'',position:0},
+{id:'ad2',bucket_id:'admin',text:'Set up system to track all client topics in one place',tag:'q2',done:false,due:'',position:1},
+{id:'l1',bucket_id:'learning',text:'Dedicate time to learning more about AI developments',tag:'q2',done:false,due:'',position:0},
+{id:'l2',bucket_id:'learning',text:'Build personal task management system',tag:'q2',done:false,due:'',position:1}];
+const SC=[{id:'ct1',name:'Sandeep',client:'J Client',role:'Stakeholder',cadence_days:7},{id:'ct2',name:'Chloe',client:'M Client',role:'Team',cadence_days:7},{id:'ct3',name:'Nishia',client:'J Client',role:'Client',cadence_days:7},{id:'ct4',name:'Kate',client:'J Client',role:'Client',cadence_days:14},{id:'ct5',name:'Philippe',client:'S Client',role:'Client',cadence_days:30},{id:'ct6',name:'Kiran',client:'MO Client',role:'Client',cadence_days:30},{id:'ct7',name:'Wolf',client:'PCEC',role:'Stakeholder',cadence_days:30},{id:'ct8',name:'Jean',client:'M Client',role:'Team',cadence_days:7},{id:'ct9',name:'Bjorn',client:'M Client',role:'Team',cadence_days:7},{id:'ct10',name:'Suzanne',client:'J Client',role:'Client',cadence_days:14}];
+const SCV=[{id:'cv1',contact_id:'ct1',date:'2026-06-01',topic:'Next steps and governance',summary:'Discussed overall J Client engagement direction.',takeaways:'Align on governance framework before Tuesday.'},{id:'cv2',contact_id:'ct2',date:'2026-06-03',topic:'Workshop output document',summary:'Check-in on doc status for June 10 workshop.',takeaways:'Doc not yet finalized follow up needed.'},{id:'cv3',contact_id:'ct3',date:'2026-06-05',topic:'Governance and handover',summary:'Reviewed governance structure and Suzanne handover plan.',takeaways:'One-pager must be ready before Tuesday.'},{id:'cv4',contact_id:'ct4',date:'2026-05-28',topic:'Contract AI output',summary:'Walked through AI contract analysis output.',takeaways:'Internal alignment needed first.'},{id:'cv5',contact_id:'ct5',date:'2026-05-15',topic:'Quality program proposal',summary:'Initial discussion on proactive quality program.',takeaways:'Get time via Siselle for follow-up.'},{id:'cv6',contact_id:'ct6',date:'2026-05-10',topic:'General connect',summary:'Introductory catch-up.',takeaways:'Schedule next connect soon.'},{id:'cv7',contact_id:'ct7',date:'2026-05-20',topic:'Healthcare topic',summary:'Brief mention of healthcare workstream.',takeaways:'Reach out again with Jean in loop.'},{id:'cv8',contact_id:'ct8',date:'2026-06-04',topic:'June 10 workshop',summary:'Pre-workshop alignment.',takeaways:'Clarify role for session.'},{id:'cv9',contact_id:'ct9',date:'2026-06-04',topic:'June 10 workshop',summary:'Pre-workshop alignment.',takeaways:'Clarify role for session.'},{id:'cv10',contact_id:'ct10',date:'2026-05-30',topic:'Handover deliverables',summary:'Outlined what needs to be handed over.',takeaways:'Full deliverables list must be captured.'}];
+async function init(){
+  const el=document.getElementById('loading-msg');
+  try{const s=localStorage.getItem('cc-settings');if(s)settings=JSON.parse(s);}catch(e){}
+  try{
+    el.textContent='Loading buckets...';
+    const bData=await GET('buckets','?order=position');
+    el.textContent='Loading tasks...';
+    const tData=await GET('tasks','?order=position');
+    if(!bData||bData.length===0){
+      el.textContent='Setting up your data...';
+      await POST('buckets',SB);await POST('tasks',ST);await POST('contacts',SC);await POST('conversations',SCV);
+      buckets=SB.map(b=>({...b,tasks:ST.filter(t=>t.bucket_id===b.id)}));
+      contacts=SC.map(c=>({...c,cadenceDays:c.cadence_days,conversations:SCV.filter(cv=>cv.contact_id===c.id)}));
+    } else {
+      buckets=bData.map(b=>({...b,tasks:(tData||[]).filter(t=>t.bucket_id===b.id)}));
+      el.textContent='Loading contacts...';
+      const cData=await GET('contacts','?order=created_at');
+      const cvData=await GET('conversations','?order=date.desc');
+      contacts=(cData||[]).map(c=>({...c,cadenceDays:c.cadence_days,conversations:(cvData||[]).filter(cv=>cv.contact_id===c.id)}));
+    }
+    try{const fData=await GET('focus_tasks');focusTaskIds=(fData||[]).map(f=>f.task_id);}catch(e){focusTaskIds=[];}
+    document.getElementById('loading-screen').style.display='none';
+    renderToday();renderTasks();scheduleDailyDigest();
+  }catch(e){
+    el.textContent='Error: '+e.message+' — tap to retry';
+    document.getElementById('loading-screen').onclick=()=>{el.textContent='Retrying...';init();};
+  }
+}
+function today(){return new Date().toISOString().split('T')[0];}
+function daysSince(d){if(!d)return 999;return Math.floor((new Date()-new Date(d))/86400000);}
+function daysUntil(d){if(!d)return null;return Math.floor((new Date(d)-new Date())/86400000);}
+function freshnessLabel(days){if(!days||days===999)return'Never';if(days===0)return'Today';if(days===1)return'Yesterday';if(days<=7)return`${days}d ago`;if(days<=30)return`${Math.floor(days/7)}w ago`;return`${Math.floor(days/30)}mo ago`;}
+function dueLabelAndClass(s){if(!s)return{label:'',cls:''};const d=daysUntil(s);if(d<0)return{label:`${Math.abs(d)}d overdue`,cls:'overdue'};if(d===0)return{label:'Due today',cls:'due-today'};if(d<=3)return{label:`Due in ${d}d`,cls:'due-soon'};return{label:`Due ${s}`,cls:''};}
+function allTasks(){return buckets.flatMap(b=>b.tasks.map(t=>({...t,bucketId:b.id,bucketLabel:b.label,bucketColor:b.color})));}
+function lastConvoDate(c){if(!c.conversations?.length)return null;return c.conversations.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0].date;}
+function overdueBy(c){if(!c.cadenceDays)return null;const l=lastConvoDate(c);return l?daysSince(l)-c.cadenceDays:999;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');if(id==='today')renderToday();if(id==='tasks')renderTasks();if(id==='done')renderDone();if(id==='contacts')renderContacts();if(id==='settings')loadSettings();}
+function renderToday(){
+  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const all=allTasks();
+  const ov=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0);
+  document.getElementById('today-overdue-section').style.display=ov.length?'block':'none';
+  document.getElementById('today-overdue-list').innerHTML=ov.map(t=>ttHTML(t,'overdue')).join('');
+  const dt=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)===0);
+  document.getElementById('today-due-section').style.display=dt.length?'block':'none';
+  document.getElementById('today-due-list').innerHTML=dt.map(t=>ttHTML(t,'due-today')).join('');
+  const ft=all.filter(t=>focusTaskIds.includes(t.id)&&!t.done);
+  document.getElementById('focus-summary').textContent=ft.length?`${ft.length} task${ft.length>1?'s':''} in focus`:'Pin up to 10 tasks as your weekly focus';
+  ['q1','q2','q3','q4'].forEach(q=>{
+    const qt=ft.filter(t=>t.tag===q);
+    document.getElementById(`${q}-tasks`).innerHTML=qt.length?qt.map(t=>`<div class="q-task ${t.done?'done':''}"><div class="q-chk" onclick="toggleTask('${t.bucketId}','${t.id}');setTimeout(renderToday,300);"></div><div class="q-task-text">${t.text}</div></div>`).join(''):'<div class="q-empty">None</div>';
+  });
+  const oc=contacts.filter(c=>(overdueBy(c)??-1)>0).slice(0,5);
+  document.getElementById('today-contacts-section').style.display=oc.length?'block':'none';
+  document.getElementById('today-contacts-list').innerHTML=oc.map(c=>{const ob=overdueBy(c);const cls=CLIENT_CLASS[c.client]||'c-other';return`<div class="today-task" style="cursor:pointer" onclick="showPage('contacts');setTimeout(()=>openDetail('${c.id}'),100)"><div class="avatar ${cls}" style="width:30px;height:30px;font-size:12px;flex-shrink:0;">${c.name[0]}</div><div class="today-task-body"><div class="today-task-text">${c.name}</div><div class="today-task-meta"><span style="font-size:10px;color:#dc2626;">${ob}d overdue</span><span style="font-size:10px;color:${CLIENT_COLORS[c.client]||'#888'}">${c.client}</span></div></div></div>`;}).join('');
+}
+function ttHTML(t,cls){const p=PRIORITY_CONFIG[t.tag];return`<div class="today-task"><div class="chk" onclick="toggleTask('${t.bucketId}','${t.id}');setTimeout(renderToday,300);" style="flex-shrink:0;margin-top:2px;"></div><div class="today-task-body"><div class="today-task-text">${t.text}</div><div class="today-task-meta"><span class="today-bucket-tag" style="background:${t.bucketColor||'#555'}">${t.bucketLabel}</span>${p?`<span class="priority-tag ${p.cls}">${p.emoji}</span>`:''}${t.due?`<span class="task-due ${cls}">${dueLabelAndClass(t.due).label}</span>`:''}</div></div></div>`;}
+function renderTasks(){
+  const q=(document.getElementById('task-search')?.value||'').toLowerCase();
+  const fb=document.getElementById('task-filter-bucket')?.value||'All';
+  const fp=document.getElementById('task-filter-priority')?.value||'All';
+  const bSel=document.getElementById('task-filter-bucket');
+  if(bSel){const cur=bSel.value;bSel.innerHTML='<option value="All">All Buckets</option>'+buckets.map(b=>`<option value="${b.id}">${b.label}</option>`).join('');bSel.value=cur;}
+  let total=0,done=0,q1ct=0,overdueCt=0;
+  buckets.forEach(b=>b.tasks.forEach(t=>{total++;if(t.done)done++;if(!t.done&&t.tag==='q1')q1ct++;if(!t.done&&t.due&&daysUntil(t.due)<0)overdueCt++;}));
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-q1').textContent=q1ct;
+  document.getElementById('stat-overdue').textContent=overdueCt;
+  document.getElementById('tasks-subtitle').textContent=`${total-done} remaining · ${done} completed`;
+  const grid=document.getElementById('task-grid');grid.innerHTML='';
+  buckets.forEach((bucket,bi)=>{
+    let tasks=bucket.tasks;
+    if(fb!=='All'&&fb!==bucket.id)return;
+    if(q)tasks=tasks.filter(t=>t.text.toLowerCase().includes(q));
+    if(['q1','q2','q3','q4'].includes(fp))tasks=tasks.filter(t=>t.tag===fp&&!t.done);
+    if(fp==='overdue')tasks=tasks.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0);
+    const div=document.createElement('div');div.className='bucket fade-up';div.style.animationDelay=`${bi*0.04}s`;
+    div.innerHTML=`<div class="bucket-header"><div class="dot" style="background:${bucket.color||'#888'}"></div><div class="bucket-title">${bucket.label}</div><div style="display:flex;gap:6px;align-items:center;"><div class="bucket-count">${bucket.tasks.filter(t=>!t.done).length}/${bucket.tasks.length}</div><button class="icon-btn" onclick="deleteBucket('${bucket.id}')">🗑</button></div></div><div class="tasks-list">${tasks.map(t=>{const dl=dueLabelAndClass(t.due);const p=PRIORITY_CONFIG[t.tag];return`<div class="task-row ${t.done?'done':''}"><div class="chk" onclick="toggleTask('${bucket.id}','${t.id}')"></div><div class="task-body"><div class="task-text" onclick="openEditTaskModal('${bucket.id}','${t.id}')">${t.text}</div><div class="task-meta">${p?`<span class="priority-tag ${p.cls}">${p.emoji} ${p.label}</span>`:''}${dl.label?`<span class="task-due ${dl.cls}">${dl.label}</span>`:''}</div></div><div class="task-row-actions"><button class="icon-btn" onclick="openEditTaskModal('${bucket.id}','${t.id}')">✏️</button><button class="icon-btn" onclick="deleteTask('${bucket.id}','${t.id}')">×</button></div></div>`;}).join('')}<div class="add-task-row"><div class="chk" style="border-color:rgba(0,0,0,0.15)"></div><input class="add-task-input" placeholder="Quick add…" onkeydown="quickAdd(event,'${bucket.id}',this)"></div></div>`;
+    grid.appendChild(div);
+  });
+}
+async function toggleTask(bucketId,taskId){const b=buckets.find(x=>x.id===bucketId);const t=b.tasks.find(x=>x.id===taskId);t.done=!t.done;renderTasks();await PATCH('tasks',{done:t.done},`?id=eq.${taskId}`);if(t.done)showToast('✓ Completed');}
+async function quickAdd(e,bucketId,input){if(e.key!=='Enter'||!input.value.trim())return;const task={id:'t'+Date.now(),bucket_id:bucketId,text:input.value.trim(),tag:'',done:false,due:'',position:999};const b=buckets.find(x=>x.id===bucketId);b.tasks.push({...task,bucketId});input.value='';renderTasks();await POST('tasks',[task]);showToast('Task added');}
+async function deleteTask(bucketId,taskId){if(!confirm('Delete this task?'))return;const b=buckets.find(x=>x.id===bucketId);b.tasks=b.tasks.filter(t=>t.id!==taskId);focusTaskIds=focusTaskIds.filter(id=>id!==taskId);renderTasks();await DEL('tasks',`?id=eq.${taskId}`);}
+async function deleteBucket(bucketId){const b=buckets.find(x=>x.id===bucketId);if(!confirm(`Delete "${b.label}" and all its tasks?`))return;buckets=buckets.filter(x=>x.id!==bucketId);renderTasks();await DEL('buckets',`?id=eq.${bucketId}`);showToast('Bucket removed');}
+function openAddTaskModal(){document.getElementById('task-modal-title').textContent='Add Task';document.getElementById('edit-task-id').value='';document.getElementById('edit-task-bucket').value='';document.getElementById('task-text').value='';document.getElementById('task-tag').value='';document.getElementById('task-due').value='';document.getElementById('task-bucket-select').innerHTML=buckets.map(b=>`<option value="${b.id}">${b.label}</option>`).join('');document.getElementById('modal-task').classList.add('open');}
+function openEditTaskModal(bucketId,taskId){const b=buckets.find(x=>x.id===bucketId);const t=b.tasks.find(x=>x.id===taskId);document.getElementById('task-modal-title').textContent='Edit Task';document.getElementById('edit-task-id').value=taskId;document.getElementById('edit-task-bucket').value=bucketId;document.getElementById('task-text').value=t.text;document.getElementById('task-tag').value=t.tag||'';document.getElementById('task-due').value=t.due||'';document.getElementById('task-bucket-select').innerHTML=buckets.map(b=>`<option value="${b.id}" ${b.id===bucketId?'selected':''}>${b.label}</option>`).join('');document.getElementById('modal-task').classList.add('open');}
+async function saveTask(){const text=document.getElementById('task-text').value.trim();if(!text)return;const newBucketId=document.getElementById('task-bucket-select').value;const tag=document.getElementById('task-tag').value;const due=document.getElementById('task-due').value;const editId=document.getElementById('edit-task-id').value;const oldBucketId=document.getElementById('edit-task-bucket').value;if(editId){const oldB=buckets.find(x=>x.id===oldBucketId);const idx=oldB.tasks.findIndex(x=>x.id===editId);const updated={...oldB.tasks[idx],text,tag,due,bucket_id:newBucketId};oldB.tasks.splice(idx,1);buckets.find(x=>x.id===newBucketId).tasks.push(updated);await PATCH('tasks',{text,tag,due,bucket_id:newBucketId},`?id=eq.${editId}`);showToast('Updated');}else{const task={id:'t'+Date.now(),bucket_id:newBucketId,text,tag,done:false,due,position:999};buckets.find(x=>x.id===newBucketId).tasks.push(task);await POST('tasks',[task]);showToast('Task added');}renderTasks();closeModal('modal-task');}
+function renderDone(){const dt=buckets.flatMap(b=>b.tasks.filter(t=>t.done).map(t=>({...t,bucketLabel:b.label,bucketColor:b.color})));document.getElementById('done-subtitle').textContent=`${dt.length} completed`;const list=document.getElementById('done-list');if(!dt.length){list.innerHTML='<div style="text-align:center;color:var(--muted);padding:48px;font-size:13px;">Nothing completed yet</div>';return;}const byB={};dt.forEach(t=>{if(!byB[t.bucketLabel])byB[t.bucketLabel]={color:t.bucketColor,tasks:[]};byB[t.bucketLabel].tasks.push(t);});list.innerHTML=Object.entries(byB).map(([label,{color,tasks}])=>`<div style="margin-bottom:20px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:8px;height:8px;border-radius:50%;background:${color};"></div><div style="font-family:Syne,sans-serif;font-size:12px;font-weight:700;color:var(--muted);">${label}</div></div>${tasks.map(t=>`<div class="archive-item"><div style="width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--muted);">✓</div><div class="archive-text">${t.text}</div><button onclick="uncompleteTask('${t.bucket_id}','${t.id}')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;">↩</button></div>`).join('')}</div>`).join('');}
+async function uncompleteTask(bucketId,taskId){buckets.forEach(b=>b.tasks.forEach(t=>{if(t.id===taskId)t.done=false;}));renderDone();await PATCH('tasks',{done:false},`?id=eq.${taskId}`);}
+async function clearAllDone(){if(!confirm('Remove all completed tasks?'))return;const ids=buckets.flatMap(b=>b.tasks.filter(t=>t.done).map(t=>t.id));buckets.forEach(b=>b.tasks=b.tasks.filter(t=>!t.done));renderDone();for(const id of ids)await DEL('tasks',`?id=eq.${id}`);}
+function openAddBucketModal(){document.getElementById('new-bucket-name').value='';selectedBucketColor='#6366f1';document.querySelectorAll('.color-swatch').forEach(s=>{s.style.border=s.dataset.color===selectedBucketColor?'2px solid #333':'2px solid transparent';});document.getElementById('modal-add-bucket').classList.add('open');}
+document.querySelectorAll('.color-swatch').forEach(s=>{s.addEventListener('click',()=>{selectedBucketColor=s.dataset.color;document.querySelectorAll('.color-swatch').forEach(x=>x.style.border='2px solid transparent');s.style.border='2px solid #333';});});
+async function saveNewBucket(){const name=document.getElementById('new-bucket-name').value.trim();if(!name)return;const bucket={id:'b'+Date.now(),label:name,color:selectedBucketColor,position:buckets.length};buckets.push({...bucket,tasks:[]});renderTasks();closeModal('modal-add-bucket');await POST('buckets',[bucket]);showToast(`"${name}" added`);}
+function openFocusModal(){tempFocusIds=[...focusTaskIds];const all=allTasks().filter(t=>!t.done);document.getElementById('focus-picker-list').innerHTML=buckets.map(b=>{const bt=all.filter(t=>t.bucketId===b.id);if(!bt.length)return'';return`<div style="margin-bottom:14px;"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${b.color};margin-bottom:6px;">${b.label}</div>${bt.map(t=>{const p=PRIORITY_CONFIG[t.tag];return`<div style="display:flex;align-items:flex-start;gap:9px;padding:6px 0;cursor:pointer;" onclick="toggleFocusPick('${t.id}',this)"><div style="width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:${tempFocusIds.includes(t.id)?'rgba(16,185,129,0.15)':''};" class="focus-chk">${tempFocusIds.includes(t.id)?'<span style="font-size:9px;color:#059669;">✓</span>':''}</div><div style="font-size:12.5px;color:#2a2a2a;">${t.text}${p?` <span style="font-size:10px;color:${p.color}">${p.emoji}</span>`:''}</div></div>`;}).join('')}</div>`;}).join('');document.getElementById('modal-focus').classList.add('open');}
+function toggleFocusPick(taskId,row){const chk=row.querySelector('.focus-chk');if(tempFocusIds.includes(taskId)){tempFocusIds=tempFocusIds.filter(id=>id!==taskId);chk.innerHTML='';chk.style.background='';}else{if(tempFocusIds.length>=10){showToast('Max 10 focus tasks');return;}tempFocusIds.push(taskId);chk.innerHTML='<span style="font-size:9px;color:#059669;">✓</span>';chk.style.background='rgba(16,185,129,0.15)';}}
+async function saveFocus(){focusTaskIds=tempFocusIds;renderToday();closeModal('modal-focus');try{await DEL('focus_tasks','?task_id=neq.null');if(focusTaskIds.length)await POST('focus_tasks',focusTaskIds.map(id=>({task_id:id})));}catch(e){}showToast(`${focusTaskIds.length} tasks in focus`);}
+async function aiRefineConvo(){
+  const dump=document.getElementById('convo-dump').value.trim();
+  if(!dump){showToast('Please enter your brain dump first');return;}
+  const proc=document.getElementById('ai-processing');proc.style.display='block';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':SUPA_KEY,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,
+        messages:[{role:'user',content:`Take this conversation brain dump and extract a clean summary and key takeaways. Brain dump: "${dump}"\n\nRespond in JSON only: {"summary":"2-3 sentence summary","takeaways":"• point 1\n• point 2"}`}]})
+    });
+    const data=await r.json();
+    const text=data.content?.[0]?.text||'';
+    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+    document.getElementById('convo-summary').value=parsed.summary||'';
+    document.getElementById('convo-takeaways').value=parsed.takeaways||'';
+    showToast('✨ AI summary ready');
+  }catch(e){showToast('AI failed — please type manually');}
+  proc.style.display='none';
+}
+function renderContacts(){const q=(document.getElementById('contact-search')?.value||'').toLowerCase();const fc=document.getElementById('contact-filter-client')?.value||'All';const fs=document.getElementById('contact-filter-status')?.value||'All';let filtered=contacts.filter(c=>{if(fc!=='All'&&c.client!==fc)return false;if(fs==='overdue'&&(overdueBy(c)??-1)<=0)return false;if(fs==='ok'&&(overdueBy(c)??-1)>0)return false;if(q&&!c.name.toLowerCase().includes(q)&&!c.client.toLowerCase().includes(q))return false;return true;}).sort((a,b)=>(overdueBy(b)??-999)-(overdueBy(a)??-999));const oc=contacts.filter(c=>(overdueBy(c)??-1)>0).length;document.getElementById('contacts-subtitle').textContent=`${contacts.length} people · ${oc>0?oc+' overdue':'all caught up'}`;const list=document.getElementById('contacts-list');list.innerHTML=filtered.length===0?'<div style="text-align:center;color:var(--muted);padding:48px;font-size:13px;">No contacts</div>':filtered.map((c,i)=>{const last=lastConvoDate(c);const days=last?daysSince(last):null;const ob=overdueBy(c);const freshColor=days===null?'#aaa':days<=7?'#059669':days<=21?'#d97706':'#dc2626';const badge=ob>0?`<span class="overdue-badge" style="background:rgba(239,68,68,0.1);color:#dc2626;">${ob}d overdue</span>`:ob!==null&&ob>-4?`<span class="overdue-badge" style="background:rgba(217,119,6,0.1);color:#d97706;">due soon</span>`:'';const cls=CLIENT_CLASS[c.client]||'c-other';return`<div class="contact-row ${selectedContactId===c.id?'selected':''}" onclick="openDetail('${c.id}')"><div class="avatar ${cls}">${c.name[0].toUpperCase()}</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="contact-name">${c.name}</span>${badge}</div><div style="font-size:11px;color:${CLIENT_COLORS[c.client]||'#888'};margin-top:1px;">${c.client}${c.role?' · '+c.role:''}</div><div style="font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.conversations?.length||0} convos${c.conversations?.length?' · '+c.conversations[0].topic:''}</div></div><div class="freshness" style="color:${freshColor}">${freshnessLabel(days)}</div></div>`;}).join('');}
+function openDetail(id){selectedContactId=id;const c=contacts.find(x=>x.id===id);if(!c)return;const ob=overdueBy(c);const last=lastConvoDate(c);const cls=CLIENT_CLASS[c.client]||'c-other';const cadLabel={7:'Weekly',14:'Bi-weekly',30:'Monthly',90:'Quarterly'}[c.cadenceDays]||'As needed';const convos=(c.conversations||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('detail-content').innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;"><div class="avatar ${cls}" style="width:44px;height:44px;font-size:17px;">${c.name[0].toUpperCase()}</div><div style="flex:1;"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:17px;color:#1a1a1a;">${c.name}</div><div style="font-size:12px;color:${CLIENT_COLORS[c.client]||'#888'};font-weight:500;">${c.client}${c.role?' · '+c.role:''}</div></div><button class="btn-ghost" onclick="openEditContact('${c.id}')">Edit</button><button onclick="document.getElementById('detail-overlay').classList.remove('open')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">×</button></div><div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">${[['Cadence',cadLabel],['Last contact',last?freshnessLabel(daysSince(last)):'Never'],['Convos',convos.length]].map(([l,v])=>`<div><div style="font-size:10px;color:#999;font-weight:700;letter-spacing:1px;text-transform:uppercase;">${l}</div><div style="font-size:13px;color:#2a2a2a;margin-top:2px;">${v}</div></div>`).join('')}${ob>0?`<div style="margin-left:auto;align-self:center;"><span style="font-size:11px;padding:3px 9px;border-radius:5px;background:rgba(239,68,68,0.1);color:#dc2626;font-weight:600;">${ob}d overdue</span></div>`:''}</div><button class="btn-primary" style="width:100%;margin-bottom:16px;" onclick="openLogConvo('${c.id}')">+ Log Conversation</button>${convos.length===0?'<div style="text-align:center;color:var(--muted);padding:24px 0;font-size:13px;">No conversations yet</div>':convos.map(cv=>`<div class="convo-card"><div class="convo-card-date">${cv.date} · ${daysSince(cv.date)===0?'Today':daysSince(cv.date)+'d ago'}</div><div class="convo-card-topic">${cv.topic}</div>${cv.summary?`<div class="convo-card-label">Summary</div><div class="convo-card-text">${cv.summary}</div>`:''}${cv.takeaways?`<div class="convo-card-label" style="color:#d97706;">Key Takeaways</div><div class="convo-card-takeaway">${cv.takeaways}</div>`:''}<button onclick="deleteConvo('${c.id}','${cv.id}')" style="background:none;border:none;color:#aaa;font-size:11px;cursor:pointer;margin-top:8px;">Delete</button></div>`).join('')}<button class="btn-danger" style="width:100%;margin-top:16px;" onclick="deleteContact('${c.id}','${c.name}')">Delete ${c.name}</button>`;document.getElementById('detail-overlay').classList.add('open');renderContacts();}
+async function deleteContact(id,name){if(!confirm(`Delete ${name}?`))return;contacts=contacts.filter(x=>x.id!==id);renderContacts();document.getElementById('detail-overlay').classList.remove('open');await DEL('contacts',`?id=eq.${id}`);showToast('Deleted');}
+function closeDetailOverlay(e){if(e.target===document.getElementById('detail-overlay')){document.getElementById('detail-overlay').classList.remove('open');selectedContactId=null;renderContacts();}}
+function openLogConvo(contactId){document.getElementById('convo-contact-id').value=contactId;document.getElementById('convo-date').value=today();['convo-topic','convo-dump','convo-summary','convo-takeaways','convo-task'].forEach(id=>document.getElementById(id).value='');document.getElementById('ai-processing').style.display='none';document.getElementById('modal-convo').classList.add('open');}
+async function saveConversation(){const contactId=document.getElementById('convo-contact-id').value;const topic=document.getElementById('convo-topic').value.trim();if(!topic)return;const convo={id:'cv'+Date.now(),contact_id:contactId,date:document.getElementById('convo-date').value,topic,summary:document.getElementById('convo-summary').value.trim(),takeaways:document.getElementById('convo-takeaways').value.trim()};const contact=contacts.find(c=>c.id===contactId);contact.conversations=[convo,...(contact.conversations||[])];const taskText=document.getElementById('convo-task').value.trim();if(taskText){const mb=buckets.find(b=>b.label===contact.client)||buckets[0];if(mb){const task={id:'t'+Date.now(),bucket_id:mb.id,text:taskText,tag:'q2',done:false,due:'',position:999};mb.tasks.push(task);await POST('tasks',[task]);}}await POST('conversations',[convo]);closeModal('modal-convo');openDetail(contactId);showToast(taskText?'Conversation + task saved':'Conversation logged');renderTasks();}
+async function deleteConvo(contactId,convoId){const contact=contacts.find(c=>c.id===contactId);contact.conversations=contact.conversations.filter(cv=>cv.id!==convoId);await DEL('conversations',`?id=eq.${convoId}`);openDetail(contactId);showToast('Deleted');}
+function openAddContactModal(){document.getElementById('contact-modal-title').textContent='Add Person';document.getElementById('edit-contact-id').value='';['contact-name','contact-role'].forEach(id=>document.getElementById(id).value='');document.getElementById('contact-cadence').value='14';document.getElementById('modal-contact').classList.add('open');}
+function openEditContact(id){const c=contacts.find(x=>x.id===id);document.getElementById('contact-modal-title').textContent='Edit Person';document.getElementById('edit-contact-id').value=id;document.getElementById('contact-name').value=c.name;document.getElementById('contact-client').value=c.client;document.getElementById('contact-role').value=c.role||'';document.getElementById('contact-cadence').value=c.cadenceDays||'';document.getElementById('modal-contact').classList.add('open');}
+async function saveContact(){const name=document.getElementById('contact-name').value.trim();if(!name)return;const editId=document.getElementById('edit-contact-id').value;const data={name,client:document.getElementById('contact-client').value,role:document.getElementById('contact-role').value.trim(),cadence_days:document.getElementById('contact-cadence').value?Number(document.getElementById('contact-cadence').value):null};if(editId){const c=contacts.find(x=>x.id===editId);Object.assign(c,{...data,cadenceDays:data.cadence_days});await PATCH('contacts',data,`?id=eq.${editId}`);showToast('Updated');}else{const nc={id:'ct'+Date.now(),...data};contacts.push({...nc,cadenceDays:data.cadence_days,conversations:[]});await POST('contacts',[nc]);showToast('Contact added');}renderContacts();closeModal('modal-contact');}
+function loadSettings(){document.getElementById('settings-resend-key').value=settings.resendKey||'';document.getElementById('settings-email1').value=settings.email1||'';document.getElementById('settings-email2').value=settings.email2||'';}
+function saveSettings(){settings.resendKey=document.getElementById('settings-resend-key').value.trim();settings.email1=document.getElementById('settings-email1').value.trim();settings.email2=document.getElementById('settings-email2').value.trim();try{localStorage.setItem('cc-settings',JSON.stringify(settings));}catch(e){}document.getElementById('settings-status').textContent='✓ Settings saved';setTimeout(()=>document.getElementById('settings-status').textContent='',2000);showToast('Settings saved');}
+async function sendEmailDigest(){
+  if(!settings.resendKey||!settings.email1){showToast('Add API key and email in Settings first');return;}
+  const all=allTasks();
+  const overdue=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0);
+  const dueSoon=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)>=0&&daysUntil(t.due)<=3);
+  const focus=all.filter(t=>focusTaskIds.includes(t.id)&&!t.done);
+  const emails=[settings.email1,settings.email2].filter(Boolean);
+  const html=`<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f5f0e8;"><h1 style="font-size:24px;font-weight:800;color:#1a1a1a;margin-bottom:4px;">Command Center</h1><p style="color:#777;font-size:13px;margin-bottom:24px;">Daily digest — ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>${overdue.length?`<div style="margin-bottom:20px;"><h2 style="font-size:14px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🔴 Overdue (${overdue.length})</h2>${overdue.map(t=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #ef4444;"><div style="font-size:13px;color:#1a1a1a;font-weight:500;">${t.text}</div><div style="font-size:11px;color:#777;margin-top:3px;">${t.bucketLabel} · ${Math.abs(daysUntil(t.due))}d overdue</div></div>`).join('')}</div>`:''}${dueSoon.length?`<div style="margin-bottom:20px;"><h2 style="font-size:14px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Due in 3 days (${dueSoon.length})</h2>${dueSoon.map(t=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #f59e0b;"><div style="font-size:13px;color:#1a1a1a;font-weight:500;">${t.text}</div><div style="font-size:11px;color:#777;margin-top:3px;">${t.bucketLabel} · due ${t.due}</div></div>`).join('')}</div>`:''}${focus.length?`<div style="margin-bottom:20px;"><h2 style="font-size:14px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">⭐ Weekly Focus (${focus.length})</h2>${focus.map(t=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #3b82f6;"><div style="font-size:13px;color:#1a1a1a;font-weight:500;">${t.text}</div><div style="font-size:11px;color:#777;margin-top:3px;">${t.bucketLabel}</div></div>`).join('')}</div>`:''}<p style="font-size:11px;color:#aaa;text-align:center;margin-top:24px;">Sent from your Command Center</p></div>`;
+  try{
+    for(const email of emails){await fetch('https://api.resend.com/emails',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.resendKey},body:JSON.stringify({from:'Command Center <onboarding@resend.dev>',to:email,subject:`Command Center Digest — ${overdue.length} overdue, ${dueSoon.length} due soon`,html})});}
+    showToast('📧 Digest sent!');
+  }catch(e){showToast('Email failed — check API key in Settings');}
+}
+async function sendTestDigest(){saveSettings();await sendEmailDigest();}
+function scheduleDailyDigest(){setInterval(()=>{const now=new Date();if(now.getHours()===22&&now.getMinutes()===0){const key=`digest-${now.toDateString()}`;if(!localStorage.getItem(key)){localStorage.setItem(key,'1');sendEmailDigest();}}},60000);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+init();
+</script>
+</body>
+</html>
