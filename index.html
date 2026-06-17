@@ -6,11 +6,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="theme-color" content="#f5f0e8">
-<title>Command Center</title>
+<title>Command Center V2</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#f5f0e8;--surface:#eee8d8;--card:#e8e0cc;--border:rgba(0,0,0,0.1);--text:#1a1a1a;--muted:#777;--muted2:#aaa;--q1:#ef4444;--q2:#3b82f6;--q3:#f59e0b;--q4:#94a3b8;}
+:root{--bg:#f5f0e8;--surface:#eee8d8;--card:#e8e0cc;--border:rgba(0,0,0,0.1);--text:#1a1a1a;--muted:#777;--muted2:#aaa;}
 html,body{height:100%;overflow:hidden;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);}
 nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface);overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -95,19 +95,17 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
 .habit-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .habit-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
 .habit-freq{font-size:11px;color:var(--muted);margin-top:2px;}
-.habit-streak{margin-left:auto;text-align:right;}
 .habit-streak-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#f97316;line-height:1;}
 .habit-streak-label{font-size:10px;color:var(--muted);}
 .habit-week{display:flex;gap:4px;margin-bottom:10px;}
-.habit-day{flex:1;aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.habit-day{flex:1;aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;}
 .habit-day.done{background:#10b981;color:#fff;}
 .habit-day.missed{background:rgba(239,68,68,0.15);color:#dc2626;}
-.habit-day.today{border:2px solid #1a1a1a;}
+.habit-day.today-pending{border:2px solid #1a1a1a;background:rgba(0,0,0,0.04);color:var(--muted);}
 .habit-day.future{background:rgba(0,0,0,0.04);color:var(--muted2);}
-.habit-day.pending{background:rgba(0,0,0,0.06);color:var(--muted);}
 .heatmap{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:10px;}
 .heatmap-cell{width:14px;height:14px;border-radius:3px;}
-.habit-check-btn{width:100%;padding:8px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all 0.15s;}
+.habit-check-btn{width:100%;padding:8px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
 .habit-check-btn.done{background:rgba(16,185,129,0.15);color:#059669;}
 .habit-check-btn.pending{background:#1a1a1a;color:#f5f0e8;}
 .contacts-list{display:flex;flex-direction:column;gap:0;}
@@ -148,19 +146,17 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
 .archive-text{font-size:12px;color:var(--muted);text-decoration:line-through;flex:1;}
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;border-radius:12px;padding:12px 18px;font-size:13px;color:#f5f0e8;z-index:999;transition:transform 0.3s ease;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
 .toast.show{transform:translateX(-50%) translateY(0);}
-.fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:none;color:#fff;font-size:24px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;transition:transform 0.2s;}
-.fab:active{transform:scale(0.95);}
+.fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);border:none;color:#fff;font-size:24px;cursor:pointer;z-index:150;box-shadow:0 4px 20px rgba(99,102,241,0.4);display:flex;align-items:center;justify-content:center;}
 .brain-dump-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:none;flex-direction:column;}
 .brain-dump-overlay.open{display:flex;}
 .brain-dump-panel{background:#faf6ee;flex:1;margin-top:60px;border-radius:20px 20px 0 0;padding:24px 20px 40px;display:flex;flex-direction:column;overflow-y:auto;}
 .brain-dump-panel h2{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--text);margin-bottom:6px;}
 .brain-dump-panel p{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.ai-chat{flex:1;overflow-y:auto;margin-bottom:16px;}
+.ai-chat{flex:1;overflow-y:auto;margin-bottom:16px;max-height:40vh;}
 .ai-msg{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:#2a2a2a;line-height:1.5;}
 .ai-msg.user{background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(168,85,247,0.08));border-color:rgba(99,102,241,0.2);}
 .ai-options{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
 .ai-option-btn{background:#fff;border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--text);cursor:pointer;font-weight:500;}
-.ai-option-btn:active{background:var(--card);}
 .c-personal{background:#f97316;}.c-mclient{background:#3b82f6;}.c-jclient{background:#a855f7;}
 .c-sclient{background:#10b981;}.c-moclient{background:#f59e0b;}.c-pcec{background:#ec4899;}
 .c-admin{background:#06b6d4;}.c-learning{background:#64748b;}.c-internal{background:#64748b;}.c-other{background:#94a3b8;}
@@ -183,8 +179,6 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
   <button class="nav-btn" onclick="showPage('contacts',this)">Contacts</button>
   <button class="nav-btn" onclick="showPage('settings',this)">⚙️</button>
 </nav>
-
-<!-- TODAY -->
 <div class="page active" id="page-today">
   <div class="section-header"><div><h1>Today</h1><p id="today-date"></p></div><button class="btn-primary" onclick="openFocusModal()">Set Focus</button></div>
   <div class="weekly-banner"><h2>📋 This Week's Focus</h2><p id="focus-summary">Pin up to 10 tasks as your weekly focus</p></div>
@@ -202,40 +196,35 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
   <div id="today-habits-section" class="today-section" style="display:none"><h2>💪 Habits Today</h2><div id="today-habits-list"></div></div>
   <div id="today-contacts-section" class="today-section" style="display:none"><h2>👤 Reconnect With</h2><div id="today-contacts-list"></div></div>
 </div>
-
-<!-- TASKS -->
 <div class="page" id="page-tasks">
   <div class="section-header"><div><h1>Tasks</h1><p id="tasks-subtitle"></p></div><div style="display:flex;gap:8px;"><button class="btn-ghost" onclick="openAddBucketModal()">+ Bucket</button><button class="btn-primary" onclick="openAddTaskModal()">+ Task</button></div></div>
   <div class="search-bar"><input class="search-input" id="task-search" placeholder="Search tasks…" oninput="renderTasks()"><select class="filter-select" id="task-filter-bucket" onchange="renderTasks()"><option value="All">All Buckets</option></select><select class="filter-select" id="task-filter-priority" onchange="renderTasks()"><option value="All">All</option><option value="q1">🔴 Do First</option><option value="q2">🔵 Schedule</option><option value="q3">🟡 Delegate</option><option value="q4">⚪ Low</option><option value="overdue">⏰ Overdue</option><option value="recurring">🔄 Recurring</option></select></div>
   <div class="stats"><div class="stat"><strong id="stat-total">0</strong>Total</div><div class="stat"><strong id="stat-done">0</strong>Done</div><div class="stat"><strong id="stat-q1">0</strong>Do First</div><div class="stat"><strong id="stat-overdue">0</strong>Overdue</div></div>
   <div class="grid" id="task-grid"></div>
 </div>
-
-<!-- DONE -->
 <div class="page" id="page-done">
   <div class="section-header"><div><h1>Completed</h1><p id="done-subtitle"></p></div><button class="btn-danger" onclick="clearAllDone()">Clear All</button></div>
   <div id="done-list"></div>
 </div>
-
-<!-- HABITS -->
 <div class="page" id="page-habits">
   <div class="section-header"><div><h1>Habits</h1><p id="habits-subtitle"></p></div><button class="btn-primary" onclick="openAddHabitModal()">+ Habit</button></div>
   <div id="habits-list"></div>
 </div>
-
-<!-- CONTACTS -->
 <div class="page" id="page-contacts">
   <div class="section-header"><div><h1>Contacts</h1><p id="contacts-subtitle"></p></div><button class="btn-primary" onclick="openAddContactModal()">+ Person</button></div>
   <div class="search-bar"><input class="search-input" id="contact-search" placeholder="Search…" oninput="renderContacts()"><select class="filter-select" id="contact-filter-client" onchange="renderContacts()"><option value="All">All</option><option>M Client</option><option>J Client</option><option>S Client</option><option>MO Client</option><option>PCEC</option><option>Personal</option><option>Internal</option><option>Other</option></select><select class="filter-select" id="contact-filter-status" onchange="renderContacts()"><option value="All">All</option><option value="overdue">🔴 Overdue</option><option value="ok">✅ OK</option></select></div>
   <div id="contacts-list" class="contacts-list"></div>
 </div>
-
-<!-- SETTINGS -->
 <div class="page" id="page-settings">
-  <div class="section-header"><div><h1>Settings</h1><p>Email digest & preferences</p></div></div>
+  <div class="section-header"><div><h1>Settings</h1><p>API keys, email & preferences</p></div></div>
+  <div class="settings-section">
+    <h3>🤖 AI Features</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Required for brain dump, conversation summaries and task extraction.</p>
+    <div class="form-group"><label class="form-label">Anthropic API Key</label><input class="form-input" id="settings-anthropic-key" type="password" placeholder="sk-ant-..."></div>
+  </div>
   <div class="settings-section">
     <h3>📧 Email Digest</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Morning briefing at 8am · Evening review at 10pm</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Morning briefing + evening review sent to your inbox.</p>
     <div class="form-group"><label class="form-label">Resend API Key</label><input class="form-input" id="settings-resend-key" type="password" placeholder="re_xxxxxxxxxxxxxxxx"></div>
     <div class="form-group"><label class="form-label">Email Address 1</label><input class="form-input" id="settings-email1" type="email" placeholder="you@email.com"></div>
     <div class="form-group"><label class="form-label">Email Address 2 (optional)</label><input class="form-input" id="settings-email2" type="email" placeholder="you@email.com"></div>
@@ -245,7 +234,7 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;">
       <button class="btn-primary" onclick="saveSettings()" style="flex:2;">Save Settings</button>
-      <button class="btn-ghost" onclick="sendTestDigest('evening')" style="flex:1;">Test Email</button>
+      <button class="btn-ghost" onclick="sendTestDigest()" style="flex:1;">Test Email</button>
     </div>
     <div id="settings-status" style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center;"></div>
   </div>
@@ -259,14 +248,8 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
     </div>
   </div>
 </div>
-
-<!-- DETAIL PANEL -->
 <div class="detail-overlay" id="detail-overlay" onclick="closeDetailOverlay(event)"><div class="detail-panel"><div class="detail-handle"></div><div id="detail-content"></div></div></div>
-
-<!-- FLOATING BRAIN DUMP BUTTON -->
 <button class="fab" onclick="openBrainDump()">🧠</button>
-
-<!-- BRAIN DUMP PANEL -->
 <div class="brain-dump-overlay" id="brain-dump-overlay">
   <div style="padding:16px;display:flex;justify-content:flex-end;"><button onclick="closeBrainDump()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:16px;padding:8px 16px;border-radius:20px;cursor:pointer;">✕ Close</button></div>
   <div class="brain-dump-panel">
@@ -274,9 +257,7 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
     <p>Speak or type freely. Claude will extract tasks and ask questions before adding them.</p>
     <div class="ai-chat" id="brain-dump-chat"></div>
     <div id="brain-dump-options" class="ai-options"></div>
-    <div style="display:flex;gap:8px;">
-      <textarea class="form-textarea" id="brain-dump-input" rows="3" placeholder="Just dumped thoughts here… e.g. need to follow up with Sandeep on governance, Philippe wants a call, remind EA about dinner…" style="flex:1;"></textarea>
-    </div>
+    <textarea class="form-textarea" id="brain-dump-input" rows="3" placeholder="Just dump your thoughts here… e.g. need to follow up with Sandeep on governance, Philippe wants a call, remind EA about dinner…"></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="btn-primary" style="flex:1;" onclick="processBrainDump()">✨ Extract Tasks</button>
       <button class="btn-ghost" onclick="closeBrainDump()">Cancel</button>
@@ -284,131 +265,40 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
     <div class="ai-processing" id="brain-dump-processing">✨ Claude is reading your notes…</div>
   </div>
 </div>
-
-<!-- MODALS -->
-<div class="modal-overlay" id="modal-task"><div class="modal">
-  <h2 id="task-modal-title">Add Task</h2>
-  <input type="hidden" id="edit-task-id"><input type="hidden" id="edit-task-bucket">
-  <div class="form-group"><label class="form-label">Task</label><input class="form-input" id="task-text" placeholder="What needs to be done?"></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Bucket</label><select class="form-select" id="task-bucket-select"></select></div>
-    <div class="form-group"><label class="form-label">Priority</label><select class="form-select" id="task-tag"><option value="">None</option><option value="q1">🔴 Do First</option><option value="q2">🔵 Schedule</option><option value="q3">🟡 Delegate</option><option value="q4">⚪ Low Priority</option></select></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" id="task-due"></div>
-    <div class="form-group"><label class="form-label">Recurring</label><select class="form-select" id="task-recurring"><option value="">Not recurring</option><option value="daily">🔄 Daily</option><option value="weekly">🔄 Weekly</option><option value="custom">🔄 Custom</option></select></div>
-  </div>
-  <div class="form-group" id="custom-recurring-group" style="display:none"><label class="form-label">Every X days</label><input class="form-input" type="number" id="task-recurring-days" placeholder="e.g. 3" min="1"></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-task')">Cancel</button><button class="btn-save" onclick="saveTask()">Save</button></div>
-</div></div>
-
-<div class="modal-overlay" id="modal-recurring-complete"><div class="modal">
-  <h2>🔄 Recurring Task</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="recurring-complete-text"></p>
-  <div class="modal-actions">
-    <button class="btn-cancel" onclick="completeRecurringToday()">Done for Today</button>
-    <button class="btn-save" onclick="closeRecurringPermanently()">Close Permanently</button>
-  </div>
-</div></div>
-
-<div class="modal-overlay" id="modal-add-bucket"><div class="modal">
-  <h2>Add Bucket</h2>
-  <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="new-bucket-name" placeholder="e.g. New Client"></div>
-  <div class="form-group"><label class="form-label">Color</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
-    <div class="color-swatch" data-color="#6366f1" style="width:28px;height:28px;border-radius:50%;background:#6366f1;cursor:pointer;border:2px solid #333;"></div>
-    <div class="color-swatch" data-color="#14b8a6" style="width:28px;height:28px;border-radius:50%;background:#14b8a6;cursor:pointer;border:2px solid transparent;"></div>
-    <div class="color-swatch" data-color="#f43f5e" style="width:28px;height:28px;border-radius:50%;background:#f43f5e;cursor:pointer;border:2px solid transparent;"></div>
-    <div class="color-swatch" data-color="#8b5cf6" style="width:28px;height:28px;border-radius:50%;background:#8b5cf6;cursor:pointer;border:2px solid transparent;"></div>
-    <div class="color-swatch" data-color="#0ea5e9" style="width:28px;height:28px;border-radius:50%;background:#0ea5e9;cursor:pointer;border:2px solid transparent;"></div>
-    <div class="color-swatch" data-color="#84cc16" style="width:28px;height:28px;border-radius:50%;background:#84cc16;cursor:pointer;border:2px solid transparent;"></div>
-  </div></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-add-bucket')">Cancel</button><button class="btn-save" onclick="saveNewBucket()">Add</button></div>
-</div></div>
-
-<div class="modal-overlay" id="modal-habit"><div class="modal">
-  <h2 id="habit-modal-title">Add Habit</h2>
-  <input type="hidden" id="edit-habit-id">
-  <div class="form-group"><label class="form-label">Habit Name</label><input class="form-input" id="habit-name" placeholder="e.g. Morning exercise"></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="habit-icon" placeholder="💪" maxlength="2"></div>
-    <div class="form-group"><label class="form-label">Category</label><select class="form-select" id="habit-category"><option value="work">Work</option><option value="personal">Personal</option></select></div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="habit-frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="custom">Custom</option></select></div>
-    <div class="form-group"><label class="form-label">Target (per week)</label><input class="form-input" type="number" id="habit-target" value="7" min="1" max="7"></div>
-  </div>
-  <div class="form-group"><label class="form-label">Reminder Time</label><input class="form-input" type="time" id="habit-reminder" value="08:00"></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-habit')">Cancel</button><button class="btn-save" onclick="saveHabit()">Save</button></div>
-</div></div>
-
-<div class="modal-overlay" id="modal-contact"><div class="modal">
-  <h2 id="contact-modal-title">Add Person</h2>
-  <input type="hidden" id="edit-contact-id">
-  <div class="form-group"><label class="form-label">Name</label><input class="form-input" id="contact-name" placeholder="Full name"></div>
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Client</label><select class="form-select" id="contact-client"><option>M Client</option><option>J Client</option><option>S Client</option><option>MO Client</option><option>PCEC</option><option>Personal</option><option>Internal</option><option>Other</option></select></div>
-    <div class="form-group"><label class="form-label">Role</label><input class="form-input" id="contact-role" placeholder="e.g. CFO"></div>
-  </div>
-  <div class="form-group"><label class="form-label">Reconnect Cadence</label><select class="form-select" id="contact-cadence"><option value="7">Weekly</option><option value="14" selected>Bi-weekly</option><option value="30">Monthly</option><option value="90">Quarterly</option><option value="">As needed</option></select></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-contact')">Cancel</button><button class="btn-save" onclick="saveContact()">Save</button></div>
-</div></div>
-
-<div class="modal-overlay" id="modal-convo"><div class="modal">
-  <h2>Log Conversation</h2>
-  <input type="hidden" id="convo-contact-id">
-  <div class="form-row">
-    <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="convo-date"></div>
-    <div class="form-group"><label class="form-label">Topic</label><input class="form-input" id="convo-topic" placeholder="What was discussed?"></div>
-  </div>
-  <div class="form-group">
-    <label class="form-label">🎙️ Brain Dump</label>
-    <textarea class="form-textarea" id="convo-dump" rows="4" placeholder="Speak or type freely — what happened? AI will clean it up…"></textarea>
-    <button class="btn-ai" style="width:100%;margin-top:8px;" onclick="aiRefineConvo()">✨ Refine with AI</button>
-    <div class="ai-processing" id="ai-processing">✨ Claude is summarizing…</div>
-  </div>
-  <div class="form-group"><label class="form-label">Summary</label><textarea class="form-textarea" id="convo-summary" rows="3" placeholder="AI will fill this in, or type manually…"></textarea></div>
-  <div class="form-group"><label class="form-label" style="color:#d97706;">Key Takeaways</label><textarea class="form-textarea" id="convo-takeaways" rows="2" placeholder="AI will fill this in, or type manually…"></textarea></div>
-  <div class="form-group"><label class="form-label" style="color:#2563eb;">➕ Create Task From This</label><input class="form-input" id="convo-task" placeholder="Optional next step…"></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-convo')">Cancel</button><button class="btn-save" onclick="saveConversation()">Save</button></div>
-</div></div>
-
-<div class="modal-overlay" id="modal-focus"><div class="modal">
-  <h2>Set Weekly Focus</h2>
-  <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Pick up to 10 tasks. They appear in your Eisenhower matrix on Today.</p>
-  <div id="focus-picker-list" style="max-height:50vh;overflow-y:auto;"></div>
-  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-focus')">Cancel</button><button class="btn-save" onclick="saveFocus()">Save Focus</button></div>
-</div></div>
-
+<div class="modal-overlay" id="modal-task"><div class="modal"><h2 id="task-modal-title">Add Task</h2><input type="hidden" id="edit-task-id"><input type="hidden" id="edit-task-bucket"><div class="form-group"><label class="form-label">Task</label><input class="form-input" id="task-text" placeholder="What needs to be done?"></div><div class="form-row"><div class="form-group"><label class="form-label">Bucket</label><select class="form-select" id="task-bucket-select"></select></div><div class="form-group"><label class="form-label">Priority</label><select class="form-select" id="task-tag"><option value="">None</option><option value="q1">🔴 Do First</option><option value="q2">🔵 Schedule</option><option value="q3">🟡 Delegate</option><option value="q4">⚪ Low Priority</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Due Date</label><input class="form-input" type="date" id="task-due"></div><div class="form-group"><label class="form-label">Recurring</label><select class="form-select" id="task-recurring"><option value="">Not recurring</option><option value="daily">🔄 Daily</option><option value="weekly">🔄 Weekly</option><option value="custom">🔄 Custom</option></select></div></div><div class="form-group" id="custom-recurring-group" style="display:none"><label class="form-label">Every X days</label><input class="form-input" type="number" id="task-recurring-days" placeholder="e.g. 3" min="1"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-task')">Cancel</button><button class="btn-save" onclick="saveTask()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-recurring-complete"><div class="modal"><h2>🔄 Recurring Task</h2><p style="font-size:13px;color:var(--muted);margin-bottom:16px;" id="recurring-complete-text"></p><div class="modal-actions"><button class="btn-cancel" onclick="completeRecurringToday()">Done for Today</button><button class="btn-save" onclick="closeRecurringPermanently()">Close Permanently</button></div></div></div>
+<div class="modal-overlay" id="modal-add-bucket"><div class="modal"><h2>Add Bucket</h2><div class="form-group"><label class="form-label">Name</label><input class="form-input" id="new-bucket-name" placeholder="e.g. New Client"></div><div class="form-group"><label class="form-label">Color</label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;"><div class="color-swatch" data-color="#6366f1" style="width:28px;height:28px;border-radius:50%;background:#6366f1;cursor:pointer;border:2px solid #333;"></div><div class="color-swatch" data-color="#14b8a6" style="width:28px;height:28px;border-radius:50%;background:#14b8a6;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#f43f5e" style="width:28px;height:28px;border-radius:50%;background:#f43f5e;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#8b5cf6" style="width:28px;height:28px;border-radius:50%;background:#8b5cf6;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#0ea5e9" style="width:28px;height:28px;border-radius:50%;background:#0ea5e9;cursor:pointer;border:2px solid transparent;"></div><div class="color-swatch" data-color="#84cc16" style="width:28px;height:28px;border-radius:50%;background:#84cc16;cursor:pointer;border:2px solid transparent;"></div></div></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-add-bucket')">Cancel</button><button class="btn-save" onclick="saveNewBucket()">Add</button></div></div></div>
+<div class="modal-overlay" id="modal-habit"><div class="modal"><h2 id="habit-modal-title">Add Habit</h2><input type="hidden" id="edit-habit-id"><div class="form-group"><label class="form-label">Habit Name</label><input class="form-input" id="habit-name" placeholder="e.g. Morning exercise"></div><div class="form-row"><div class="form-group"><label class="form-label">Icon (emoji)</label><input class="form-input" id="habit-icon" placeholder="💪" maxlength="2"></div><div class="form-group"><label class="form-label">Category</label><select class="form-select" id="habit-category"><option value="work">Work</option><option value="personal">Personal</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Frequency</label><select class="form-select" id="habit-frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option></select></div><div class="form-group"><label class="form-label">Target per week</label><input class="form-input" type="number" id="habit-target" value="7" min="1" max="7"></div></div><div class="form-group"><label class="form-label">Reminder Time</label><input class="form-input" type="time" id="habit-reminder" value="08:00"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-habit')">Cancel</button><button class="btn-save" onclick="saveHabit()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-contact"><div class="modal"><h2 id="contact-modal-title">Add Person</h2><input type="hidden" id="edit-contact-id"><div class="form-group"><label class="form-label">Name</label><input class="form-input" id="contact-name" placeholder="Full name"></div><div class="form-row"><div class="form-group"><label class="form-label">Client</label><select class="form-select" id="contact-client"><option>M Client</option><option>J Client</option><option>S Client</option><option>MO Client</option><option>PCEC</option><option>Personal</option><option>Internal</option><option>Other</option></select></div><div class="form-group"><label class="form-label">Role</label><input class="form-input" id="contact-role" placeholder="e.g. CFO"></div></div><div class="form-group"><label class="form-label">Reconnect Cadence</label><select class="form-select" id="contact-cadence"><option value="7">Weekly</option><option value="14" selected>Bi-weekly</option><option value="30">Monthly</option><option value="90">Quarterly</option><option value="">As needed</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-contact')">Cancel</button><button class="btn-save" onclick="saveContact()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-convo"><div class="modal"><h2>Log Conversation</h2><input type="hidden" id="convo-contact-id"><div class="form-row"><div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="convo-date"></div><div class="form-group"><label class="form-label">Topic</label><input class="form-input" id="convo-topic" placeholder="What was discussed?"></div></div><div class="form-group"><label class="form-label">🎙️ Brain Dump</label><textarea class="form-textarea" id="convo-dump" rows="4" placeholder="Speak or type freely — what happened? AI will clean it up…"></textarea><button class="btn-ai" style="width:100%;margin-top:8px;" onclick="aiRefineConvo()">✨ Refine with AI</button><div class="ai-processing" id="ai-processing">✨ Claude is summarizing…</div></div><div class="form-group"><label class="form-label">Summary</label><textarea class="form-textarea" id="convo-summary" rows="3" placeholder="AI will fill this in, or type manually…"></textarea></div><div class="form-group"><label class="form-label" style="color:#d97706;">Key Takeaways</label><textarea class="form-textarea" id="convo-takeaways" rows="2" placeholder="AI will fill this in, or type manually…"></textarea></div><div class="form-group"><label class="form-label" style="color:#2563eb;">➕ Create Task From This</label><input class="form-input" id="convo-task" placeholder="Optional next step…"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-convo')">Cancel</button><button class="btn-save" onclick="saveConversation()">Save</button></div></div></div>
+<div class="modal-overlay" id="modal-focus"><div class="modal"><h2>Set Weekly Focus</h2><p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Pick up to 10 tasks. They appear in your Eisenhower matrix on Today.</p><div id="focus-picker-list" style="max-height:50vh;overflow-y:auto;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal('modal-focus')">Cancel</button><button class="btn-save" onclick="saveFocus()">Save Focus</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const SUPA_URL='https://ejcgnnwyyfjyqzhvzxne.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqY2dubnd5eWZqeXF6aHZ6eG5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5NDcyMjgsImV4cCI6MjA5NjUyMzIyOH0.kFMN7i_8VWezlKSL3io1Csfa3scDAezqGTCNaRzti0g';
-const ANTHROPIC_KEY='YOUR_ANTHROPIC_KEY';
 const H={'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Prefer':'return=representation'};
 async function db(method,table,body=null,query=''){const r=await fetch(`${SUPA_URL}/rest/v1/${table}${query}`,{method,headers:H,body:body?JSON.stringify(body):null});if(!r.ok){const e=await r.text();throw new Error(table+': '+e);}return r.status===204?null:await r.json();}
 const GET=(table,q='')=>db('GET',table,null,q);
 const POST=(table,body)=>db('POST',table,body);
 const PATCH=(table,body,q)=>db('PATCH',table,body,q);
 const DEL=(table,q)=>db('DELETE',table,null,q);
-
 async function callClaude(prompt,maxTokens=600){
+  const key=settings.anthropicKey;
+  if(!key){showToast('Add your Anthropic API key in Settings first');throw new Error('No API key');}
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:maxTokens,messages:[{role:'user',content:prompt}]})
   });
   const data=await r.json();
+  if(data.error)throw new Error(data.error.message);
   return data.content?.[0]?.text||'';
 }
-
 const CLIENT_COLORS={'M Client':'#3b82f6','J Client':'#a855f7','S Client':'#10b981','MO Client':'#f59e0b','PCEC':'#ec4899','Personal':'#f97316','Internal':'#64748b','Other':'#94a3b8'};
 const CLIENT_CLASS={'M Client':'c-mclient','J Client':'c-jclient','S Client':'c-sclient','MO Client':'c-moclient','PCEC':'c-pcec','Personal':'c-personal','Internal':'c-internal','Other':'c-other'};
 const PRIORITY_CONFIG={q1:{label:'Do First',emoji:'🔴',color:'#ef4444',cls:'p-q1'},q2:{label:'Schedule',emoji:'🔵',color:'#3b82f6',cls:'p-q2'},q3:{label:'Delegate',emoji:'🟡',color:'#f59e0b',cls:'p-q3'},q4:{label:'Low',emoji:'⚪',color:'#94a3b8',cls:'p-q4'}};
 const DAYS=['Su','Mo','Tu','We','Th','Fr','Sa'];
-
-let buckets=[],contacts=[],habits=[],focusTaskIds=[],selectedContactId=null,selectedBucketColor='#6366f1',tempFocusIds=[];
-let settings={resendKey:'',email1:'',email2:'',morningTime:'08:00',eveningTime:'22:00'};
-let brainDumpTasks=[],brainDumpIndex=0,currentRecurringTaskId=null,currentRecurringBucketId=null;
-
+let buckets=[],contacts=[],habits=[],focusTaskIds=[],selectedContactId=null,selectedBucketColor='#6366f1',tempFocusIds=[],brainDumpTasks=[],brainDumpIndex=0,currentRecurringTaskId=null,currentRecurringBucketId=null;
+let settings={anthropicKey:'',resendKey:'',email1:'',email2:'',morningTime:'08:00',eveningTime:'22:00'};
 const SB=[{id:'personal',label:'Personal',color:'#f97316',position:0},{id:'mclient',label:'M Client',color:'#3b82f6',position:1},{id:'jclient',label:'J Client',color:'#a855f7',position:2},{id:'sclient',label:'S Client',color:'#10b981',position:3},{id:'moclient',label:'MO Client',color:'#f59e0b',position:4},{id:'pcec',label:'PCEC',color:'#ec4899',position:5},{id:'admin',label:'Admin & Relationships',color:'#06b6d4',position:6},{id:'learning',label:'Learning & Tools',color:'#64748b',position:7}];
 const ST=[
 {id:'p1',bucket_id:'personal',text:'Complete H1B renewal application',tag:'q1',done:false,due:'2026-06-15',recurring:'',recurring_days:0,position:0},
@@ -453,7 +343,6 @@ const ST=[
 const SC=[{id:'ct1',name:'Sandeep',client:'J Client',role:'Stakeholder',cadence_days:7},{id:'ct2',name:'Chloe',client:'M Client',role:'Team',cadence_days:7},{id:'ct3',name:'Nishia',client:'J Client',role:'Client',cadence_days:7},{id:'ct4',name:'Kate',client:'J Client',role:'Client',cadence_days:14},{id:'ct5',name:'Philippe',client:'S Client',role:'Client',cadence_days:30},{id:'ct6',name:'Kiran',client:'MO Client',role:'Client',cadence_days:30},{id:'ct7',name:'Wolf',client:'PCEC',role:'Stakeholder',cadence_days:30},{id:'ct8',name:'Jean',client:'M Client',role:'Team',cadence_days:7},{id:'ct9',name:'Bjorn',client:'M Client',role:'Team',cadence_days:7},{id:'ct10',name:'Suzanne',client:'J Client',role:'Client',cadence_days:14}];
 const SCV=[{id:'cv1',contact_id:'ct1',date:'2026-06-01',topic:'Next steps and governance',summary:'Discussed overall J Client engagement direction.',takeaways:'Align on governance framework before Tuesday.'},{id:'cv2',contact_id:'ct2',date:'2026-06-03',topic:'Workshop output document',summary:'Check-in on doc status for June 10 workshop.',takeaways:'Doc not yet finalized follow up needed.'},{id:'cv3',contact_id:'ct3',date:'2026-06-05',topic:'Governance and handover',summary:'Reviewed governance structure and Suzanne handover plan.',takeaways:'One-pager must be ready before Tuesday.'},{id:'cv4',contact_id:'ct4',date:'2026-05-28',topic:'Contract AI output',summary:'Walked through AI contract analysis output.',takeaways:'Internal alignment needed first.'},{id:'cv5',contact_id:'ct5',date:'2026-05-15',topic:'Quality program proposal',summary:'Initial discussion on proactive quality program.',takeaways:'Get time via Siselle for follow-up.'},{id:'cv6',contact_id:'ct6',date:'2026-05-10',topic:'General connect',summary:'Introductory catch-up.',takeaways:'Schedule next connect soon.'},{id:'cv7',contact_id:'ct7',date:'2026-05-20',topic:'Healthcare topic',summary:'Brief mention of healthcare workstream.',takeaways:'Reach out again with Jean in loop.'},{id:'cv8',contact_id:'ct8',date:'2026-06-04',topic:'June 10 workshop',summary:'Pre-workshop alignment.',takeaways:'Clarify role for session.'},{id:'cv9',contact_id:'ct9',date:'2026-06-04',topic:'June 10 workshop',summary:'Pre-workshop alignment.',takeaways:'Clarify role for session.'},{id:'cv10',contact_id:'ct10',date:'2026-05-30',topic:'Handover deliverables',summary:'Outlined what needs to be handed over.',takeaways:'Full deliverables list must be captured.'}];
 const DEFAULT_HABITS=[{id:'h1',name:'Review Command Center',icon:'📋',category:'work',frequency:'daily',target:7,reminder:'08:00',completions:[]},{id:'h2',name:'Log conversations',icon:'📝',category:'work',frequency:'daily',target:7,reminder:'18:00',completions:[]},{id:'h3',name:'AI learning time',icon:'🤖',category:'work',frequency:'weekly',target:3,reminder:'09:00',completions:[]},{id:'h4',name:'Exercise',icon:'💪',category:'personal',frequency:'daily',target:7,reminder:'07:00',completions:[]},{id:'h5',name:'Reading',icon:'📚',category:'personal',frequency:'daily',target:5,reminder:'21:00',completions:[]}];
-
 async function init(){
   const el=document.getElementById('loading-msg');
   try{const s=localStorage.getItem('cc-settings');if(s)settings=JSON.parse(s);}catch(e){}
@@ -483,7 +372,6 @@ async function init(){
     document.getElementById('loading-screen').onclick=()=>{el.textContent='Retrying...';init();};
   }
 }
-
 function today(){return new Date().toISOString().split('T')[0];}
 function daysSince(d){if(!d)return 999;return Math.floor((new Date()-new Date(d))/86400000);}
 function daysUntil(d){if(!d)return null;return Math.floor((new Date(d)-new Date())/86400000);}
@@ -494,7 +382,6 @@ function lastConvoDate(c){if(!c.conversations?.length)return null;return c.conve
 function overdueBy(c){if(!c.cadenceDays)return null;const l=lastConvoDate(c);return l?daysSince(l)-c.cadenceDays:999;}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');if(id==='today')renderToday();if(id==='tasks')renderTasks();if(id==='done')renderDone();if(id==='habits')renderHabits();if(id==='contacts')renderContacts();if(id==='settings')loadSettings();}
-
 function renderToday(){
   document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   const all=allTasks();
@@ -514,15 +401,13 @@ function renderToday(){
   document.getElementById('today-habits-section').style.display=todayHabits.length?'block':'none';
   document.getElementById('today-habits-list').innerHTML=todayHabits.map(h=>{
     const done=h.completions.includes(today());
-    return`<div class="today-task"><div style="font-size:18px;flex-shrink:0;">${h.icon||'💪'}</div><div class="today-task-body"><div class="today-task-text">${h.name}</div><div class="today-task-meta"><span style="font-size:10px;color:var(--muted);">${h.frequency} · ${h.reminder}</span></div></div><button onclick="toggleHabit('${h.id}')" style="background:${done?'rgba(16,185,129,0.15)':'#1a1a1a'};color:${done?'#059669':'#f5f0e8'};border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">${done?'✓ Done':'Mark Done'}</button></div>`;
+    return`<div class="today-task"><div style="font-size:18px;flex-shrink:0;">${h.icon||'💪'}</div><div class="today-task-body"><div class="today-task-text">${h.name}</div><div class="today-task-meta"><span style="font-size:10px;color:var(--muted);">${h.frequency} · ⏰ ${h.reminder}</span></div></div><button onclick="toggleHabit('${h.id}')" style="background:${done?'rgba(16,185,129,0.15)':'#1a1a1a'};color:${done?'#059669':'#f5f0e8'};border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">${done?'✓ Done':'Mark Done'}</button></div>`;
   }).join('');
   const oc=contacts.filter(c=>(overdueBy(c)??-1)>0).slice(0,5);
   document.getElementById('today-contacts-section').style.display=oc.length?'block':'none';
   document.getElementById('today-contacts-list').innerHTML=oc.map(c=>{const ob=overdueBy(c);const cls=CLIENT_CLASS[c.client]||'c-other';return`<div class="today-task" style="cursor:pointer" onclick="showPage('contacts');setTimeout(()=>openDetail('${c.id}'),100)"><div class="avatar ${cls}" style="width:30px;height:30px;font-size:12px;flex-shrink:0;">${c.name[0]}</div><div class="today-task-body"><div class="today-task-text">${c.name}</div><div class="today-task-meta"><span style="font-size:10px;color:#dc2626;">${ob}d overdue</span><span style="font-size:10px;color:${CLIENT_COLORS[c.client]||'#888'}">${c.client}</span></div></div></div>`;}).join('');
 }
-
 function ttHTML(t,cls){const p=PRIORITY_CONFIG[t.tag];return`<div class="today-task"><div class="chk" onclick="toggleTask('${t.bucketId}','${t.id}');setTimeout(renderToday,300);" style="flex-shrink:0;margin-top:2px;"></div><div class="today-task-body"><div class="today-task-text">${t.text}${t.recurring?` <span class="recurring-badge">🔄</span>`:''}</div><div class="today-task-meta"><span class="today-bucket-tag" style="background:${t.bucketColor||'#555'}">${t.bucketLabel}</span>${p?`<span class="priority-tag ${p.cls}">${p.emoji}</span>`:''}${t.due?`<span class="task-due ${cls}">${dueLabelAndClass(t.due).label}</span>`:''}</div></div></div>`;}
-
 function renderTasks(){
   const q=(document.getElementById('task-search')?.value||'').toLowerCase();
   const fb=document.getElementById('task-filter-bucket')?.value||'All';
@@ -546,111 +431,62 @@ function renderTasks(){
     grid.appendChild(div);
   });
 }
-
-function handleTaskClick(bucketId,taskId){
-  const b=buckets.find(x=>x.id===bucketId);
-  const t=b.tasks.find(x=>x.id===taskId);
-  if(t.recurring&&!t.done){
-    currentRecurringTaskId=taskId;currentRecurringBucketId=bucketId;
-    document.getElementById('recurring-complete-text').textContent=`"${t.text}" is a ${t.recurring} recurring task. What would you like to do?`;
-    document.getElementById('modal-recurring-complete').classList.add('open');
-  } else {toggleTask(bucketId,taskId);}
-}
-
-async function completeRecurringToday(){
-  closeModal('modal-recurring-complete');
-  showToast('✓ Done for today — will reappear tomorrow');
-}
-
-async function closeRecurringPermanently(){
-  closeModal('modal-recurring-complete');
-  await toggleTask(currentRecurringBucketId,currentRecurringTaskId);
-  showToast('✓ Recurring task closed permanently');
-}
-
+function handleTaskClick(bucketId,taskId){const b=buckets.find(x=>x.id===bucketId);const t=b.tasks.find(x=>x.id===taskId);if(t.recurring&&!t.done){currentRecurringTaskId=taskId;currentRecurringBucketId=bucketId;document.getElementById('recurring-complete-text').textContent=`"${t.text}" is a ${t.recurring} recurring task. What would you like to do?`;document.getElementById('modal-recurring-complete').classList.add('open');}else{toggleTask(bucketId,taskId);}}
+async function completeRecurringToday(){closeModal('modal-recurring-complete');showToast('✓ Done for today — will reappear tomorrow');}
+async function closeRecurringPermanently(){closeModal('modal-recurring-complete');await toggleTask(currentRecurringBucketId,currentRecurringTaskId);showToast('✓ Recurring task closed permanently');}
 async function toggleTask(bucketId,taskId){const b=buckets.find(x=>x.id===bucketId);const t=b.tasks.find(x=>x.id===taskId);t.done=!t.done;renderTasks();await PATCH('tasks',{done:t.done},`?id=eq.${taskId}`);if(t.done)showToast('✓ Completed');}
 async function quickAdd(e,bucketId,input){if(e.key!=='Enter'||!input.value.trim())return;const task={id:'t'+Date.now(),bucket_id:bucketId,text:input.value.trim(),tag:'',done:false,due:'',recurring:'',recurring_days:0,position:999};const b=buckets.find(x=>x.id===bucketId);b.tasks.push({...task,bucketId});input.value='';renderTasks();await POST('tasks',[task]);showToast('Task added');}
 async function deleteTask(bucketId,taskId){if(!confirm('Delete this task?'))return;const b=buckets.find(x=>x.id===bucketId);b.tasks=b.tasks.filter(t=>t.id!==taskId);focusTaskIds=focusTaskIds.filter(id=>id!==taskId);renderTasks();await DEL('tasks',`?id=eq.${taskId}`);}
 async function deleteBucket(bucketId){const b=buckets.find(x=>x.id===bucketId);if(!confirm(`Delete "${b.label}" and all its tasks?`))return;buckets=buckets.filter(x=>x.id!==bucketId);renderTasks();await DEL('buckets',`?id=eq.${bucketId}`);showToast('Bucket removed');}
-
 function openAddTaskModal(){document.getElementById('task-modal-title').textContent='Add Task';document.getElementById('edit-task-id').value='';document.getElementById('edit-task-bucket').value='';document.getElementById('task-text').value='';document.getElementById('task-tag').value='';document.getElementById('task-due').value='';document.getElementById('task-recurring').value='';document.getElementById('task-recurring-days').value='';document.getElementById('custom-recurring-group').style.display='none';document.getElementById('task-bucket-select').innerHTML=buckets.map(b=>`<option value="${b.id}">${b.label}</option>`).join('');document.getElementById('modal-task').classList.add('open');}
 function openEditTaskModal(bucketId,taskId){const b=buckets.find(x=>x.id===bucketId);const t=b.tasks.find(x=>x.id===taskId);document.getElementById('task-modal-title').textContent='Edit Task';document.getElementById('edit-task-id').value=taskId;document.getElementById('edit-task-bucket').value=bucketId;document.getElementById('task-text').value=t.text;document.getElementById('task-tag').value=t.tag||'';document.getElementById('task-due').value=t.due||'';document.getElementById('task-recurring').value=t.recurring||'';document.getElementById('task-recurring-days').value=t.recurring_days||'';document.getElementById('custom-recurring-group').style.display=t.recurring==='custom'?'block':'none';document.getElementById('task-bucket-select').innerHTML=buckets.map(b=>`<option value="${b.id}" ${b.id===bucketId?'selected':''}>${b.label}</option>`).join('');document.getElementById('modal-task').classList.add('open');}
 document.getElementById('task-recurring').addEventListener('change',function(){document.getElementById('custom-recurring-group').style.display=this.value==='custom'?'block':'none';});
 async function saveTask(){const text=document.getElementById('task-text').value.trim();if(!text)return;const newBucketId=document.getElementById('task-bucket-select').value;const tag=document.getElementById('task-tag').value;const due=document.getElementById('task-due').value;const recurring=document.getElementById('task-recurring').value;const recurring_days=recurring==='daily'?1:recurring==='weekly'?7:recurring==='custom'?parseInt(document.getElementById('task-recurring-days').value)||1:0;const editId=document.getElementById('edit-task-id').value;const oldBucketId=document.getElementById('edit-task-bucket').value;if(editId){const oldB=buckets.find(x=>x.id===oldBucketId);const idx=oldB.tasks.findIndex(x=>x.id===editId);const updated={...oldB.tasks[idx],text,tag,due,recurring,recurring_days,bucket_id:newBucketId};oldB.tasks.splice(idx,1);buckets.find(x=>x.id===newBucketId).tasks.push(updated);await PATCH('tasks',{text,tag,due,recurring,recurring_days,bucket_id:newBucketId},`?id=eq.${editId}`);showToast('Updated');}else{const task={id:'t'+Date.now(),bucket_id:newBucketId,text,tag,done:false,due,recurring,recurring_days,position:999};buckets.find(x=>x.id===newBucketId).tasks.push(task);await POST('tasks',[task]);showToast('Task added');}renderTasks();closeModal('modal-task');}
-
 function renderDone(){const dt=buckets.flatMap(b=>b.tasks.filter(t=>t.done).map(t=>({...t,bucketLabel:b.label,bucketColor:b.color})));document.getElementById('done-subtitle').textContent=`${dt.length} completed`;const list=document.getElementById('done-list');if(!dt.length){list.innerHTML='<div style="text-align:center;color:var(--muted);padding:48px;font-size:13px;">Nothing completed yet</div>';return;}const byB={};dt.forEach(t=>{if(!byB[t.bucketLabel])byB[t.bucketLabel]={color:t.bucketColor,tasks:[]};byB[t.bucketLabel].tasks.push(t);});list.innerHTML=Object.entries(byB).map(([label,{color,tasks}])=>`<div style="margin-bottom:20px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:8px;height:8px;border-radius:50%;background:${color};"></div><div style="font-family:Syne,sans-serif;font-size:12px;font-weight:700;color:var(--muted);">${label}</div></div>${tasks.map(t=>`<div class="archive-item"><div style="width:14px;height:14px;border-radius:4px;background:rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--muted);">✓</div><div class="archive-text">${t.text}</div><button onclick="uncompleteTask('${t.bucket_id}','${t.id}')" style="background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;">↩</button></div>`).join('')}</div>`).join('');}
 async function uncompleteTask(bucketId,taskId){buckets.forEach(b=>b.tasks.forEach(t=>{if(t.id===taskId)t.done=false;}));renderDone();await PATCH('tasks',{done:false},`?id=eq.${taskId}`);}
 async function clearAllDone(){if(!confirm('Remove all completed tasks?'))return;const ids=buckets.flatMap(b=>b.tasks.filter(t=>t.done).map(t=>t.id));buckets.forEach(b=>b.tasks=b.tasks.filter(t=>!t.done));renderDone();for(const id of ids)await DEL('tasks',`?id=eq.${id}`);}
-
 function openAddBucketModal(){document.getElementById('new-bucket-name').value='';selectedBucketColor='#6366f1';document.querySelectorAll('.color-swatch').forEach(s=>{s.style.border=s.dataset.color===selectedBucketColor?'2px solid #333':'2px solid transparent';});document.getElementById('modal-add-bucket').classList.add('open');}
 document.querySelectorAll('.color-swatch').forEach(s=>{s.addEventListener('click',()=>{selectedBucketColor=s.dataset.color;document.querySelectorAll('.color-swatch').forEach(x=>x.style.border='2px solid transparent');s.style.border='2px solid #333';});});
 async function saveNewBucket(){const name=document.getElementById('new-bucket-name').value.trim();if(!name)return;const bucket={id:'b'+Date.now(),label:name,color:selectedBucketColor,position:buckets.length};buckets.push({...bucket,tasks:[]});renderTasks();closeModal('modal-add-bucket');await POST('buckets',[bucket]);showToast(`"${name}" added`);}
-
-function isHabitDueToday(h){if(h.frequency==='daily')return true;if(h.frequency==='weekly'){const d=new Date().getDay();return d===1;}return true;}
+function isHabitDueToday(h){if(h.frequency==='daily')return true;if(h.frequency==='weekly'){return new Date().getDay()===1;}return true;}
 function toggleHabit(habitId){const h=habits.find(x=>x.id===habitId);if(!h)return;const t=today();if(h.completions.includes(t)){h.completions=h.completions.filter(d=>d!==t);}else{h.completions.push(t);}saveHabits();renderHabits();renderToday();}
+function toggleHabitDate(habitId,date){const h=habits.find(x=>x.id===habitId);if(!h)return;if(h.completions.includes(date)){h.completions=h.completions.filter(d=>d!==date);}else{h.completions.push(date);}saveHabits();renderHabits();}
 function saveHabits(){try{localStorage.setItem('cc-habits',JSON.stringify(habits));}catch(e){}}
-function getStreak(h){let streak=0;const d=new Date();while(true){const ds=d.toISOString().split('T')[0];if(h.completions.includes(ds)){streak++;d.setDate(d.getDate()-1);}else break;}return streak;}
-
+function getStreak(h){let streak=0;const d=new Date();for(let i=0;i<365;i++){const ds=new Date(d);ds.setDate(d.getDate()-i);const key=ds.toISOString().split('T')[0];if(h.completions.includes(key)){streak++;}else if(i>0){break;}}return streak;}
 function renderHabits(){
   const work=habits.filter(h=>h.category==='work');
   const personal=habits.filter(h=>h.category==='personal');
-  const total=habits.length;const doneToday=habits.filter(h=>h.completions.includes(today())).length;
-  document.getElementById('habits-subtitle').textContent=`${doneToday}/${total} done today`;
-  const list=document.getElementById('habits-list');
+  const doneToday=habits.filter(h=>h.completions.includes(today())).length;
+  document.getElementById('habits-subtitle').textContent=`${doneToday}/${habits.length} done today`;
   const renderGroup=(title,hs)=>{
     if(!hs.length)return'';
-    return`<div style="margin-bottom:20px;"><div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">${title}</div>
-    ${hs.map(h=>{
+    return`<div style="margin-bottom:20px;"><div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">${title}</div>${hs.map(h=>{
       const streak=getStreak(h);const doneT=h.completions.includes(today());
       const last30=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toISOString().split('T')[0];});
-      const thisWeek=Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()-new Date().getDay()+i);return{date:d.toISOString().split('T')[0],label:DAYS[i],isToday:d.toISOString().split('T')[0]===today(),isFuture:d>new Date()};});
-      return`<div class="habit-card">
-        <div class="habit-header">
-          <div class="habit-icon" style="background:${h.category==='work'?'rgba(59,130,246,0.1)':'rgba(249,115,22,0.1)'};">${h.icon||'💪'}</div>
-          <div style="flex:1;"><div class="habit-name">${h.name}</div><div class="habit-freq">${h.frequency} · target ${h.target}x/week · ⏰ ${h.reminder}</div></div>
-          <div class="habit-streak"><div class="habit-streak-num">${streak}</div><div class="habit-streak-label">day streak</div></div>
-          <button class="icon-btn" onclick="openEditHabitModal('${h.id}')" style="margin-left:8px;">✏️</button>
-          <button class="icon-btn" onclick="deleteHabit('${h.id}')">🗑</button>
-        </div>
-        <div class="habit-week">${thisWeek.map(({date,label,isToday,isFuture})=>{
-          const done=h.completions.includes(date);
-          const cls=isFuture?'future':done?'done':isToday?'pending today':'missed';
-          return`<div class="habit-day ${cls}" onclick="${!isFuture?`toggleHabitDate('${h.id}','${date}')`:''}" style="${isToday?'font-weight:700;':''}">${label}</div>`;
-        }).join('')}</div>
-        <div class="heatmap">${last30.map(date=>{
-          const done=h.completions.includes(date);
-          const opacity=done?1:0.1;
-          return`<div class="heatmap-cell" style="background:rgba(16,185,129,${opacity});" title="${date}"></div>`;
-        }).join('')}</div>
-        <button class="habit-check-btn ${doneT?'done':'pending'}" onclick="toggleHabit('${h.id}')">${doneT?'✓ Done Today':'Mark Done Today'}</button>
-      </div>`;
+      const thisWeek=Array.from({length:7},(_,i)=>{const d=new Date();const day=new Date(d);day.setDate(d.getDate()-d.getDay()+i);const dateStr=day.toISOString().split('T')[0];const isToday=dateStr===today();const isFuture=day>new Date()&&!isToday;const done=h.completions.includes(dateStr);const cls=isFuture?'future':done?'done':isToday?'today-pending':'missed';return`<div class="habit-day ${cls}" onclick="${!isFuture?`toggleHabitDate('${h.id}','${dateStr}')`:''}">${DAYS[i]}</div>`;});
+      return`<div class="habit-card"><div class="habit-header"><div class="habit-icon" style="background:${h.category==='work'?'rgba(59,130,246,0.1)':'rgba(249,115,22,0.1)'};">${h.icon||'💪'}</div><div style="flex:1;"><div class="habit-name">${h.name}</div><div class="habit-freq">${h.frequency} · target ${h.target}x/week · ⏰ ${h.reminder}</div></div><div style="text-align:right;margin-left:8px;"><div class="habit-streak-num">${streak}</div><div class="habit-streak-label">streak</div></div><button class="icon-btn" onclick="openEditHabitModal('${h.id}')" style="margin-left:6px;">✏️</button><button class="icon-btn" onclick="deleteHabit('${h.id}')">🗑</button></div><div class="habit-week">${thisWeek.join('')}</div><div class="heatmap">${last30.map(date=>`<div class="heatmap-cell" style="background:rgba(16,185,129,${h.completions.includes(date)?1:0.08});" title="${date}"></div>`).join('')}</div><button class="habit-check-btn ${doneT?'done':'pending'}" onclick="toggleHabit('${h.id}')">${doneT?'✓ Done Today':'Mark Done Today'}</button></div>`;
     }).join('')}</div>`;
   };
-  list.innerHTML=renderGroup('💼 Work Habits',work)+renderGroup('🌱 Personal Habits',personal);
+  document.getElementById('habits-list').innerHTML=renderGroup('💼 Work Habits',work)+renderGroup('🌱 Personal Habits',personal);
 }
-
-function toggleHabitDate(habitId,date){const h=habits.find(x=>x.id===habitId);if(!h)return;if(h.completions.includes(date)){h.completions=h.completions.filter(d=>d!==date);}else{h.completions.push(date);}saveHabits();renderHabits();}
-
 function openAddHabitModal(){document.getElementById('habit-modal-title').textContent='Add Habit';document.getElementById('edit-habit-id').value='';document.getElementById('habit-name').value='';document.getElementById('habit-icon').value='';document.getElementById('habit-frequency').value='daily';document.getElementById('habit-target').value='7';document.getElementById('habit-reminder').value='08:00';document.getElementById('habit-category').value='work';document.getElementById('modal-habit').classList.add('open');}
 function openEditHabitModal(id){const h=habits.find(x=>x.id===id);document.getElementById('habit-modal-title').textContent='Edit Habit';document.getElementById('edit-habit-id').value=id;document.getElementById('habit-name').value=h.name;document.getElementById('habit-icon').value=h.icon||'';document.getElementById('habit-frequency').value=h.frequency;document.getElementById('habit-target').value=h.target;document.getElementById('habit-reminder').value=h.reminder||'08:00';document.getElementById('habit-category').value=h.category;document.getElementById('modal-habit').classList.add('open');}
 function saveHabit(){const name=document.getElementById('habit-name').value.trim();if(!name)return;const editId=document.getElementById('edit-habit-id').value;const data={name,icon:document.getElementById('habit-icon').value||'💪',category:document.getElementById('habit-category').value,frequency:document.getElementById('habit-frequency').value,target:parseInt(document.getElementById('habit-target').value)||7,reminder:document.getElementById('habit-reminder').value};if(editId){const h=habits.find(x=>x.id===editId);Object.assign(h,data);}else{habits.push({id:'h'+Date.now(),...data,completions:[]});}saveHabits();renderHabits();closeModal('modal-habit');showToast(editId?'Habit updated':'Habit added');}
 function deleteHabit(id){if(!confirm('Delete this habit?'))return;habits=habits.filter(h=>h.id!==id);saveHabits();renderHabits();showToast('Habit deleted');}
-
 function openFocusModal(){tempFocusIds=[...focusTaskIds];const all=allTasks().filter(t=>!t.done);document.getElementById('focus-picker-list').innerHTML=buckets.map(b=>{const bt=all.filter(t=>t.bucketId===b.id);if(!bt.length)return'';return`<div style="margin-bottom:14px;"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${b.color};margin-bottom:6px;">${b.label}</div>${bt.map(t=>{const p=PRIORITY_CONFIG[t.tag];return`<div style="display:flex;align-items:flex-start;gap:9px;padding:6px 0;cursor:pointer;" onclick="toggleFocusPick('${t.id}',this)"><div style="width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:${tempFocusIds.includes(t.id)?'rgba(16,185,129,0.15)':''};" class="focus-chk">${tempFocusIds.includes(t.id)?'<span style="font-size:9px;color:#059669;">✓</span>':''}</div><div style="font-size:12.5px;color:#2a2a2a;">${t.text}${p?` <span style="font-size:10px;color:${p.color}">${p.emoji}</span>`:''}</div></div>`;}).join('')}</div>`;}).join('');document.getElementById('modal-focus').classList.add('open');}
 function toggleFocusPick(taskId,row){const chk=row.querySelector('.focus-chk');if(tempFocusIds.includes(taskId)){tempFocusIds=tempFocusIds.filter(id=>id!==taskId);chk.innerHTML='';chk.style.background='';}else{if(tempFocusIds.length>=10){showToast('Max 10 focus tasks');return;}tempFocusIds.push(taskId);chk.innerHTML='<span style="font-size:9px;color:#059669;">✓</span>';chk.style.background='rgba(16,185,129,0.15)';}}
 async function saveFocus(){focusTaskIds=tempFocusIds;renderToday();closeModal('modal-focus');try{await DEL('focus_tasks','?task_id=neq.null');if(focusTaskIds.length)await POST('focus_tasks',focusTaskIds.map(id=>({task_id:id})));}catch(e){}showToast(`${focusTaskIds.length} tasks in focus`);}
-
 async function aiRefineConvo(){
   const dump=document.getElementById('convo-dump').value.trim();
   if(!dump){showToast('Please enter your brain dump first');return;}
   const proc=document.getElementById('ai-processing');proc.style.display='block';
   try{
-    const text=await callClaude(`Take this conversation brain dump and extract a clean summary and key takeaways.\n\nBrain dump: "${dump}"\n\nRespond in JSON only, no other text:\n{"summary":"2-3 sentence summary of what was discussed","takeaways":"• key point 1\\n• key point 2\\n• key point 3"}`);
+    const text=await callClaude(`Take this conversation brain dump and extract a clean summary and key takeaways.\n\nBrain dump: "${dump}"\n\nRespond in JSON only:\n{"summary":"2-3 sentence summary","takeaways":"• key point 1\\n• key point 2"}`);
     const parsed=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());
     document.getElementById('convo-summary').value=parsed.summary||'';
     document.getElementById('convo-takeaways').value=parsed.takeaways||'';
     showToast('✨ AI summary ready');
-  }catch(e){showToast('AI failed — please type manually');console.error(e);}
+  }catch(e){if(e.message!=='No API key')showToast('AI failed — check your API key in Settings');}
   proc.style.display='none';
 }
 async function openBrainDump(){
@@ -663,25 +499,8 @@ async function openBrainDump(){
   addChatMsg('Hi! Just dump everything on your mind — meetings, follow-ups, things you need to do. Don\'t worry about structure, just type or speak freely.',false);
 }
 function closeBrainDump(){document.getElementById('brain-dump-overlay').classList.remove('open');}
-function addChatMsg(text,isUser){
-  const div=document.createElement('div');
-  div.className=`ai-msg ${isUser?'user':''}`;
-  div.textContent=text;
-  document.getElementById('brain-dump-chat').appendChild(div);
-  div.scrollIntoView({behavior:'smooth'});
-}
-function showOptions(options){
-  const container=document.getElementById('brain-dump-options');
-  container.innerHTML='';
-  options.forEach(opt=>{
-    const btn=document.createElement('button');
-    btn.className='ai-option-btn';
-    btn.textContent=opt.label;
-    btn.onclick=()=>opt.action();
-    container.appendChild(btn);
-  });
-}
-
+function addChatMsg(text,isUser){const div=document.createElement('div');div.className=`ai-msg ${isUser?'user':''}`;div.textContent=text;document.getElementById('brain-dump-chat').appendChild(div);div.scrollIntoView({behavior:'smooth'});}
+function showBrainDumpOptions(options){const container=document.getElementById('brain-dump-options');container.innerHTML='';options.forEach(opt=>{const btn=document.createElement('button');btn.className='ai-option-btn';btn.textContent=opt.label;btn.onclick=()=>opt.action();container.appendChild(btn);});}
 async function processBrainDump(){
   const dump=document.getElementById('brain-dump-input').value.trim();
   if(!dump){showToast('Please enter your brain dump first');return;}
@@ -691,7 +510,7 @@ async function processBrainDump(){
   document.getElementById('brain-dump-options').innerHTML='';
   const bucketNames=buckets.map(b=>b.label).join(', ');
   try{
-    const text=await callClaude(`You are a task extraction assistant. Extract all action items from this brain dump.\n\nAvailable buckets: ${bucketNames}\n\nBrain dump: "${dump}"\n\nFor each task, make your best guess at the bucket based on context clues (client names, topics). If genuinely unclear, set bucket to "UNCLEAR".\n\nRespond in JSON only:\n{"tasks":[{"text":"task description","bucket":"best guess bucket name","priority":"q1/q2/q3/q4","due":"YYYY-MM-DD or empty","recurring":"daily/weekly/or empty","notes":"why bucket is unclear if applicable"}]}`,800);
+    const text=await callClaude(`You are a task extraction assistant. Extract all action items from this brain dump.\n\nAvailable buckets: ${bucketNames}\n\nBrain dump: "${dump}"\n\nFor each task, make your best guess at the bucket. If genuinely unclear, set bucket to "UNCLEAR".\n\nRespond in JSON only:\n{"tasks":[{"text":"task description","bucket":"best guess bucket name","priority":"q1 or q2 or q3 or q4","due":"YYYY-MM-DD or empty string","recurring":"daily or weekly or empty string"}]}`,1000);
     const parsed=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());
     brainDumpTasks=parsed.tasks||[];
     document.getElementById('brain-dump-processing').style.display='none';
@@ -701,121 +520,40 @@ async function processBrainDump(){
     askAboutTask();
   }catch(e){
     document.getElementById('brain-dump-processing').style.display='none';
-    addChatMsg('Something went wrong. Please try again.',false);
-    console.error(e);
+    if(e.message!=='No API key')addChatMsg('Something went wrong. Please try again.',false);
   }
 }
-
 function askAboutTask(){
-  if(brainDumpIndex>=brainDumpTasks.length){
-    finalizeBrainDump();return;
-  }
+  if(brainDumpIndex>=brainDumpTasks.length){finalizeBrainDump();return;}
   const t=brainDumpTasks[brainDumpIndex];
   const isUnclear=t.bucket==='UNCLEAR'||!buckets.find(b=>b.label===t.bucket);
+  const p=PRIORITY_CONFIG[t.priority]||PRIORITY_CONFIG.q2;
   if(isUnclear){
-    addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}: "${t.text}"\n\nWhich bucket should this go in?`,false);
-    showOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));
+    addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}:\n"${t.text}"\n\nWhich bucket should this go in?`,false);
+    showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));
   } else {
-    const p=PRIORITY_CONFIG[t.priority]||PRIORITY_CONFIG.q2;
-    addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}: "${t.text}"\n→ ${t.bucket} · ${p.emoji} ${p.label}${t.due?' · due '+t.due:''}${t.recurring?' · 🔄 '+t.recurring:''}\n\nLooks right?`,false);
-    showOptions([
+    addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}:\n"${t.text}"\n→ ${t.bucket} · ${p.emoji} ${p.label}${t.due?' · due '+t.due:''}${t.recurring?' · 🔄 '+t.recurring:''}\n\nLooks right?`,false);
+    showBrainDumpOptions([
       {label:'✓ Yes, add it',action:()=>{addChatMsg('✓ Added',true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}},
-      {label:'Change bucket',action:()=>{
-        addChatMsg('Which bucket?',false);
-        showOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));
-      }},
-      {label:'Skip this task',action:()=>{t._skip=true;addChatMsg('Skipped',true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}},
+      {label:'Change bucket',action:()=>{addChatMsg('Which bucket?',false);showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));}},
+      {label:'Skip',action:()=>{t._skip=true;addChatMsg('Skipped',true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}},
     ]);
   }
 }
-
 async function finalizeBrainDump(){
   const toAdd=brainDumpTasks.filter(t=>!t._skip);
-  if(!toAdd.length){addChatMsg('No tasks to add. Done!',false);showOptions([{label:'Close',action:closeBrainDump}]);return;}
+  if(!toAdd.length){addChatMsg('No tasks to add. Done!',false);showBrainDumpOptions([{label:'Close',action:closeBrainDump}]);return;}
   addChatMsg(`Adding ${toAdd.length} task${toAdd.length>1?'s':''}…`,false);
   for(const t of toAdd){
     const bucket=buckets.find(b=>b.label===t.bucket)||buckets[0];
-    const task={id:'t'+Date.now()+Math.random(),bucket_id:bucket.id,text:t.text,tag:t.priority||'q2',done:false,due:t.due||'',recurring:t.recurring||'',recurring_days:t.recurring==='daily'?1:t.recurring==='weekly'?7:0,position:999};
+    const task={id:'t'+Date.now()+Math.random().toString(36).substr(2,5),bucket_id:bucket.id,text:t.text,tag:t.priority||'q2',done:false,due:t.due||'',recurring:t.recurring||'',recurring_days:t.recurring==='daily'?1:t.recurring==='weekly'?7:0,position:999};
     bucket.tasks.push(task);
     await POST('tasks',[task]);
-    await new Promise(r=>setTimeout(r,100));
+    await new Promise(r=>setTimeout(r,150));
   }
   renderTasks();
   addChatMsg(`✅ Done! Added ${toAdd.length} task${toAdd.length>1?'s':''}to your task list.`,false);
-  showOptions([{label:'Add more',action:()=>{document.getElementById('brain-dump-chat').innerHTML='';brainDumpTasks=[];brainDumpIndex=0;addChatMsg('What else is on your mind?',false);}},{label:'Close',action:closeBrainDump}]);
+  showBrainDumpOptions([{label:'Add more',action:()=>{document.getElementById('brain-dump-chat').innerHTML='';brainDumpTasks=[];brainDumpIndex=0;addChatMsg('What else is on your mind?',false);}},{label:'Close',action:closeBrainDump}]);
   showToast(`✅ ${toAdd.length} tasks added`);
 }
-
-function renderContacts(){const q=(document.getElementById('contact-search')?.value||'').toLowerCase();const fc=document.getElementById('contact-filter-client')?.value||'All';const fs=document.getElementById('contact-filter-status')?.value||'All';let filtered=contacts.filter(c=>{if(fc!=='All'&&c.client!==fc)return false;if(fs==='overdue'&&(overdueBy(c)??-1)<=0)return false;if(fs==='ok'&&(overdueBy(c)??-1)>0)return false;if(q&&!c.name.toLowerCase().includes(q)&&!c.client.toLowerCase().includes(q))return false;return true;}).sort((a,b)=>(overdueBy(b)??-999)-(overdueBy(a)??-999));const oc=contacts.filter(c=>(overdueBy(c)??-1)>0).length;document.getElementById('contacts-subtitle').textContent=`${contacts.length} people · ${oc>0?oc+' overdue':'all caught up'}`;const list=document.getElementById('contacts-list');list.innerHTML=filtered.length===0?'<div style="text-align:center;color:var(--muted);padding:48px;font-size:13px;">No contacts</div>':filtered.map((c,i)=>{const last=lastConvoDate(c);const days=last?daysSince(last):null;const ob=overdueBy(c);const freshColor=days===null?'#aaa':days<=7?'#059669':days<=21?'#d97706':'#dc2626';const badge=ob>0?`<span class="overdue-badge" style="background:rgba(239,68,68,0.1);color:#dc2626;">${ob}d overdue</span>`:ob!==null&&ob>-4?`<span class="overdue-badge" style="background:rgba(217,119,6,0.1);color:#d97706;">due soon</span>`:'';const cls=CLIENT_CLASS[c.client]||'c-other';return`<div class="contact-row ${selectedContactId===c.id?'selected':''}" onclick="openDetail('${c.id}')"><div class="avatar ${cls}">${c.name[0].toUpperCase()}</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><span class="contact-name">${c.name}</span>${badge}</div><div style="font-size:11px;color:${CLIENT_COLORS[c.client]||'#888'};margin-top:1px;">${c.client}${c.role?' · '+c.role:''}</div><div style="font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.conversations?.length||0} convos${c.conversations?.length?' · '+c.conversations[0].topic:''}</div></div><div class="freshness" style="color:${freshColor}">${freshnessLabel(days)}</div></div>`;}).join('');}
-
-function openDetail(id){selectedContactId=id;const c=contacts.find(x=>x.id===id);if(!c)return;const ob=overdueBy(c);const last=lastConvoDate(c);const cls=CLIENT_CLASS[c.client]||'c-other';const cadLabel={7:'Weekly',14:'Bi-weekly',30:'Monthly',90:'Quarterly'}[c.cadenceDays]||'As needed';const convos=(c.conversations||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));document.getElementById('detail-content').innerHTML=`<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;"><div class="avatar ${cls}" style="width:44px;height:44px;font-size:17px;">${c.name[0].toUpperCase()}</div><div style="flex:1;"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:17px;color:#1a1a1a;">${c.name}</div><div style="font-size:12px;color:${CLIENT_COLORS[c.client]||'#888'};font-weight:500;">${c.client}${c.role?' · '+c.role:''}</div></div><button class="btn-ghost" onclick="openEditContact('${c.id}')">Edit</button><button onclick="document.getElementById('detail-overlay').classList.remove('open')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">×</button></div><div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap;">${[['Cadence',cadLabel],['Last contact',last?freshnessLabel(daysSince(last)):'Never'],['Convos',convos.length]].map(([l,v])=>`<div><div style="font-size:10px;color:#999;font-weight:700;letter-spacing:1px;text-transform:uppercase;">${l}</div><div style="font-size:13px;color:#2a2a2a;margin-top:2px;">${v}</div></div>`).join('')}${ob>0?`<div style="margin-left:auto;align-self:center;"><span style="font-size:11px;padding:3px 9px;border-radius:5px;background:rgba(239,68,68,0.1);color:#dc2626;font-weight:600;">${ob}d overdue</span></div>`:''}</div><button class="btn-primary" style="width:100%;margin-bottom:16px;" onclick="openLogConvo('${c.id}')">+ Log Conversation</button>${convos.length===0?'<div style="text-align:center;color:var(--muted);padding:24px 0;font-size:13px;">No conversations yet</div>':convos.map(cv=>`<div class="convo-card"><div class="convo-card-date">${cv.date} · ${daysSince(cv.date)===0?'Today':daysSince(cv.date)+'d ago'}</div><div class="convo-card-topic">${cv.topic}</div>${cv.summary?`<div class="convo-card-label">Summary</div><div class="convo-card-text">${cv.summary}</div>`:''}${cv.takeaways?`<div class="convo-card-label" style="color:#d97706;">Key Takeaways</div><div class="convo-card-takeaway">${cv.takeaways}</div>`:''}<button onclick="deleteConvo('${c.id}','${cv.id}')" style="background:none;border:none;color:#aaa;font-size:11px;cursor:pointer;margin-top:8px;">Delete</button></div>`).join('')}<button class="btn-danger" style="width:100%;margin-top:16px;" onclick="deleteContact('${c.id}','${c.name}')">Delete ${c.name}</button>`;document.getElementById('detail-overlay').classList.add('open');renderContacts();}
-async function deleteContact(id,name){if(!confirm(`Delete ${name}?`))return;contacts=contacts.filter(x=>x.id!==id);renderContacts();document.getElementById('detail-overlay').classList.remove('open');await DEL('contacts',`?id=eq.${id}`);showToast('Deleted');}
-function closeDetailOverlay(e){if(e.target===document.getElementById('detail-overlay')){document.getElementById('detail-overlay').classList.remove('open');selectedContactId=null;renderContacts();}}
-function openLogConvo(contactId){document.getElementById('convo-contact-id').value=contactId;document.getElementById('convo-date').value=today();['convo-topic','convo-dump','convo-summary','convo-takeaways','convo-task'].forEach(id=>document.getElementById(id).value='');document.getElementById('ai-processing').style.display='none';document.getElementById('modal-convo').classList.add('open');}
-async function saveConversation(){const contactId=document.getElementById('convo-contact-id').value;const topic=document.getElementById('convo-topic').value.trim();if(!topic)return;const convo={id:'cv'+Date.now(),contact_id:contactId,date:document.getElementById('convo-date').value,topic,summary:document.getElementById('convo-summary').value.trim(),takeaways:document.getElementById('convo-takeaways').value.trim()};const contact=contacts.find(c=>c.id===contactId);contact.conversations=[convo,...(contact.conversations||[])];const taskText=document.getElementById('convo-task').value.trim();if(taskText){const mb=buckets.find(b=>b.label===contact.client)||buckets[0];if(mb){const task={id:'t'+Date.now(),bucket_id:mb.id,text:taskText,tag:'q2',done:false,due:'',recurring:'',recurring_days:0,position:999};mb.tasks.push(task);await POST('tasks',[task]);}}await POST('conversations',[convo]);closeModal('modal-convo');openDetail(contactId);showToast(taskText?'Conversation + task saved':'Conversation logged');renderTasks();}
-async function deleteConvo(contactId,convoId){const contact=contacts.find(c=>c.id===contactId);contact.conversations=contact.conversations.filter(cv=>cv.id!==convoId);await DEL('conversations',`?id=eq.${convoId}`);openDetail(contactId);showToast('Deleted');}
-function openAddContactModal(){document.getElementById('contact-modal-title').textContent='Add Person';document.getElementById('edit-contact-id').value='';['contact-name','contact-role'].forEach(id=>document.getElementById(id).value='');document.getElementById('contact-cadence').value='14';document.getElementById('modal-contact').classList.add('open');}
-function openEditContact(id){const c=contacts.find(x=>x.id===id);document.getElementById('contact-modal-title').textContent='Edit Person';document.getElementById('edit-contact-id').value=id;document.getElementById('contact-name').value=c.name;document.getElementById('contact-client').value=c.client;document.getElementById('contact-role').value=c.role||'';document.getElementById('contact-cadence').value=c.cadenceDays||'';document.getElementById('modal-contact').classList.add('open');}
-async function saveContact(){const name=document.getElementById('contact-name').value.trim();if(!name)return;const editId=document.getElementById('edit-contact-id').value;const data={name,client:document.getElementById('contact-client').value,role:document.getElementById('contact-role').value.trim(),cadence_days:document.getElementById('contact-cadence').value?Number(document.getElementById('contact-cadence').value):null};if(editId){const c=contacts.find(x=>x.id===editId);Object.assign(c,{...data,cadenceDays:data.cadence_days});await PATCH('contacts',data,`?id=eq.${editId}`);showToast('Updated');}else{const nc={id:'ct'+Date.now(),...data};contacts.push({...nc,cadenceDays:data.cadence_days,conversations:[]});await POST('contacts',[nc]);showToast('Contact added');}renderContacts();closeModal('modal-contact');}
-
-function loadSettings(){document.getElementById('settings-resend-key').value=settings.resendKey||'';document.getElementById('settings-email1').value=settings.email1||'';document.getElementById('settings-email2').value=settings.email2||'';document.getElementById('settings-morning-time').value=settings.morningTime||'08:00';document.getElementById('settings-evening-time').value=settings.eveningTime||'22:00';}
-function saveSettings(){settings.resendKey=document.getElementById('settings-resend-key').value.trim();settings.email1=document.getElementById('settings-email1').value.trim();settings.email2=document.getElementById('settings-email2').value.trim();settings.morningTime=document.getElementById('settings-morning-time').value;settings.eveningTime=document.getElementById('settings-evening-time').value;try{localStorage.setItem('cc-settings',JSON.stringify(settings));}catch(e){}document.getElementById('settings-status').textContent='✓ Settings saved';setTimeout(()=>document.getElementById('settings-status').textContent='',2000);showToast('Settings saved');}
-
-async function buildDigestHTML(type){
-  const all=allTasks();
-  const todayStr=today();
-  const overdue=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0);
-  const dueToday=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)===0);
-  const dueSoon=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)>0&&daysUntil(t.due)<=3);
-  const focus=all.filter(t=>focusTaskIds.includes(t.id)&&!t.done);
-  const habitsCompleted=habits.filter(h=>h.completions.includes(todayStr));
-  const habitsMissed=habits.filter(h=>isHabitDueToday(h)&&!h.completions.includes(todayStr));
-  const habitsTomorrow=habits.filter(h=>isHabitDueToday(h));
-  const isMorning=type==='morning';
-  const title=isMorning?'☀️ Morning Briefing':'🌙 Evening Review';
-  const taskRow=(t,borderColor)=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid ${borderColor};"><div style="font-size:13px;color:#1a1a1a;font-weight:500;">${t.text}</div><div style="font-size:11px;color:#777;margin-top:3px;">${t.bucketLabel}${t.due?' · '+t.due:''}</div></div>`;
-  return`<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f5f0e8;">
-    <h1 style="font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:2px;">Command Center</h1>
-    <p style="color:#777;font-size:13px;margin-bottom:20px;">${title} · ${new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</p>
-    ${overdue.length?`<div style="margin-bottom:18px;"><h2 style="font-size:13px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">🔴 Overdue (${overdue.length})</h2>${overdue.map(t=>taskRow(t,'#ef4444')).join('')}</div>`:''}
-    ${dueToday.length?`<div style="margin-bottom:18px;"><h2 style="font-size:13px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">📅 Due Today (${dueToday.length})</h2>${dueToday.map(t=>taskRow(t,'#f59e0b')).join('')}</div>`:''}
-    ${dueSoon.length?`<div style="margin-bottom:18px;"><h2 style="font-size:13px;font-weight:700;color:#059669;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">📆 Due in 3 Days (${dueSoon.length})</h2>${dueSoon.map(t=>taskRow(t,'#10b981')).join('')}</div>`:''}
-    ${focus.length?`<div style="margin-bottom:18px;"><h2 style="font-size:13px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⭐ Weekly Focus (${focus.length})</h2>${focus.map(t=>taskRow(t,'#3b82f6')).join('')}</div>`:''}
-    <div style="margin-bottom:18px;"><h2 style="font-size:13px;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">💪 Habits</h2>
-    ${isMorning?`${habitsTomorrow.map(h=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #8b5cf6;"><div style="font-size:13px;color:#1a1a1a;font-weight:500;">${h.icon} ${h.name}</div><div style="font-size:11px;color:#777;margin-top:3px;">Reminder: ${h.reminder}</div></div>`).join('')||'<div style="font-size:13px;color:#777;">No habits scheduled today</div>'}`
-    :`${habitsCompleted.map(h=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #10b981;"><div style="font-size:13px;color:#059669;font-weight:500;">✓ ${h.icon} ${h.name}</div></div>`).join('')}${habitsMissed.map(h=>`<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:6px;border-left:3px solid #ef4444;"><div style="font-size:13px;color:#dc2626;font-weight:500;">✗ ${h.icon} ${h.name}</div></div>`).join('')}${!habitsCompleted.length&&!habitsMissed.length?'<div style="font-size:13px;color:#777;">No habits tracked today</div>':''}`}
-    </div>
-    <p style="font-size:11px;color:#aaa;text-align:center;margin-top:20px;">Sent from your Command Center</p>
-  </div>`;
-}
-
-async function sendDigest(type){
-  if(!settings.resendKey||!settings.email1){return;}
-  const html=await buildDigestHTML(type);
-  const all=allTasks();
-  const overdue=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0).length;
-  const dueToday=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)===0).length;
-  const subject=type==='morning'?`☀️ Morning Briefing — ${dueToday} due today, ${overdue} overdue`:`🌙 Evening Review — ${overdue} overdue`;
-  const emails=[settings.email1,settings.email2].filter(Boolean);
-  try{for(const email of emails){await fetch('https://api.resend.com/emails',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+settings.resendKey},body:JSON.stringify({from:'Command Center <onboarding@resend.dev>',to:email,subject,html});});}showToast(`📧 ${type==='morning'?'Morning':'Evening'} digest sent!`);}
-  catch(e){showToast('Email failed — check API key in Settings');}
-}
-async function sendTestDigest(type){saveSettings();await sendDigest(type||'evening');}
-function scheduleDigests(){
-  setInterval(()=>{
-    const now=new Date();
-    const timeStr=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const dateStr=now.toDateString();
-    if(timeStr===settings.morningTime){const key=`morning-${dateStr}`;if(!localStorage.getItem(key)){localStorage.setItem(key,'1');sendDigest('morning');}}
-    if(timeStr===settings.eveningTime){const key=`evening-${dateStr}`;if(!localStorage.getItem(key)){localStorage.setItem(key,'1');sendDigest('evening');}}
-    habits.forEach(h=>{if(h.reminder&&timeStr===h.reminder){const key=`habit-notif-${h.id}-${dateStr}`;if(!localStorage.getItem(key)&&!h.completions.includes(today())){localStorage.setItem(key,'1');if(Notification.permission==='granted'){new Notification(`Habit reminder: ${h.icon} ${h.name}`,{body:'Time to complete your habit!'});}}}});
-  },60000);
-  if('Notification' in window&&Notification.permission==='default'){Notification.requestPermission();}
-}
-
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
-init();
-</script>
-</body>
-</html>
+function renderContacts(){const q=(document.getElementById('contact-search')?.value||'').toLowerCase();const fc=document.getElementById('contact-filter-client')?.value||'All';const fs=document.getElementById('contact-filter-status')?.value||'All';let filtered=contacts.filter(c=>{if(fc!=='All'&&c.client!==fc)return false;if(fs==='overdue'&&(overdueBy(c)??-1)<=0)return false;if(fs==='ok'&&(overdueBy(c)??-1)>0)return false;if(q&&!c.name.toLowerCase().includes(q)&&!c.client.toLowerCase().includes(q))return false;return true;}).sort((a,b)=>(overdueBy(b)??-999)-(overdueBy(a)??-999));const oc=contacts.filter(c=>(overdueBy(c)??-1)>0).length;document.getElementById('contacts-subtitle').textContent=`${contacts.length} people · ${oc>0?oc+' overdue':'all caught up'}`;const list=document.getElementById('contacts-list');list.innerHTML=filtered.length===0?'<div style="text-align:center;color:var(--muted);padding:48px;font-size:13px;">No contacts</div>':​​​​​​​​​​​​​​​​
