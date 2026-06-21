@@ -530,12 +530,12 @@ function askAboutTask(){
   const p=PRIORITY_CONFIG[t.priority]||PRIORITY_CONFIG.q2;
   if(isUnclear){
     addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}:\n"${t.text}"\n\nWhich bucket should this go in?`,false);
-    showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));
+    showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;setTimeout(askAboutTask,200);}})));
   } else {
     addChatMsg(`Task ${brainDumpIndex+1} of ${brainDumpTasks.length}:\n"${t.text}"\n→ ${t.bucket} · ${p.emoji} ${p.label}${t.due?' · due '+t.due:''}${t.recurring?' · 🔄 '+t.recurring:''}\n\nLooks right?`,false);
     showBrainDumpOptions([
       {label:'✓ Yes, add it',action:()=>{addChatMsg('✓ Added',true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}},
-      {label:'Change bucket',action:()=>{addChatMsg('Which bucket?',false);showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}})));}},
+      {label:'Change bucket',action:()=>{addChatMsg('Which bucket?',false);showBrainDumpOptions(buckets.map(b=>({label:b.label,action:()=>{t.bucket=b.label;addChatMsg(b.label,true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;setTimeout(askAboutTask,200);}})));}},
       {label:'Skip',action:()=>{t._skip=true;addChatMsg('Skipped',true);document.getElementById('brain-dump-options').innerHTML='';brainDumpIndex++;askAboutTask();}},
     ]);
   }
@@ -544,12 +544,13 @@ async function finalizeBrainDump(){
   const toAdd=brainDumpTasks.filter(t=>!t._skip);
   if(!toAdd.length){addChatMsg('No tasks to add. Done!',false);showBrainDumpOptions([{label:'Close',action:closeBrainDump}]);return;}
   addChatMsg(`Adding ${toAdd.length} task${toAdd.length>1?'s':''}…`,false);
+  document.getElementById('brain-dump-options').innerHTML='';
   for(const t of toAdd){
     const bucket=buckets.find(b=>b.label===t.bucket)||buckets[0];
-    const task={id:'t'+Date.now()+Math.random().toString(36).substr(2,5),bucket_id:bucket.id,text:t.text,tag:t.priority||'q2',done:false,due:t.due||'',recurring:t.recurring||'',recurring_days:t.recurring==='daily'?1:t.recurring==='weekly'?7:0,position:999};
+    const task={id:'t'+Date.now()+Math.random().toString(36).substr(2,9),bucket_id:bucket.id,text:t.text,tag:t.priority||'q2',done:false,due:t.due||'',recurring:t.recurring||'',recurring_days:t.recurring==='daily'?1:t.recurring==='weekly'?7:0,position:999};
     bucket.tasks.push(task);
     await POST('tasks',[task]);
-    await new Promise(r=>setTimeout(r,150));
+    await new Promise(r=>setTimeout(r,300));
   }
   renderTasks();
   addChatMsg(`✅ Done! Added ${toAdd.length} task${toAdd.length>1?'s':''}to your task list.`,false);
