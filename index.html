@@ -548,9 +548,14 @@ async function finalizeBrainDump(){
   for(const t of toAdd){
     const bucket=buckets.find(b=>b.label===t.bucket)||buckets[0];
     const task={id:'t'+Date.now()+Math.random().toString(36).substr(2,9),bucket_id:bucket.id,text:t.text,tag:t.priority||'q2',done:false,due:t.due||'',recurring:t.recurring||'',recurring_days:t.recurring==='daily'?1:t.recurring==='weekly'?7:0,position:999};
-    bucket.tasks.push(task);
-    await POST('tasks',[task]);
-    await new Promise(r=>setTimeout(r,300));
+    try{
+  await POST('tasks',[task]);
+  bucket.tasks.push(task);
+}catch(e){
+  console.error('Failed to save task:',e);
+  addChatMsg(`Warning: could not save "${t.text}" — ${e.message}`,false);
+}
+await new Promise(r=>setTimeout(r,300));
   }
   renderTasks();
   addChatMsg(`✅ Done! Added ${toAdd.length} task${toAdd.length>1?'s':''}to your task list.`,false);
