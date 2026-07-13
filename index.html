@@ -5,18 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-<script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "a552567f-17e6-4c2f-9cd8-1d3d3c00dae6",
-      notifyButton: {enable: false},
-      allowLocalhostAsSecureOrigin: true,
-    });
-  });
-</script>
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script><script>window.OneSignalDeferred=window.OneSignalDeferred||[];OneSignalDeferred.push(async function(OneSignal){await OneSignal.init({appId:"a552567f-17e6-4c2f-9cd8-1d3d3c00dae6",notifyButton:{enable:false}});});</script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script> <script>   window.OneSignalDeferred = window.OneSignalDeferred || [];   OneSignalDeferred.push(async function(OneSignal) {     await OneSignal.init({       appId: "a552567f-17e6-4c2f-9cd8-1d3d3c00dae6",       notifyButton: {enable: false},       allowLocalhostAsSecureOrigin: true,     });   }); </script>
+<title>Command Center V2</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -227,11 +217,13 @@ nav{display:flex;gap:0;padding:0 8px;border-bottom:1px solid var(--border);flex-
 </div>
 <div class="page" id="page-settings">
   <div class="section-header"><div><h1>Settings</h1><p>API keys, email & preferences</p></div></div>
-  <div class="settings-section">
+<div class="settings-section">
     <h3>🤖 AI Features</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Required for brain dump, conversation summaries and task extraction.</p>
     <div class="form-group"><label class="form-label">Anthropic API Key</label><input class="form-input" id="settings-anthropic-key" type="password" placeholder="sk-ant-..."></div>
+    <div class="form-group"><label class="form-label">OneSignal App ID (push notifications)</label><input class="form-input" id="settings-onesignal-id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"></div>
   </div>
+
   <div class="settings-section">
     <h3>📧 Email Digest</h3>
     <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Morning briefing + evening review sent to your inbox.</p>
@@ -376,7 +368,7 @@ async function init(){
     }
     try{const fData=await GET('focus_tasks');focusTaskIds=(fData||[]).map(f=>f.task_id);}catch(e){focusTaskIds=[];}
     document.getElementById('loading-screen').style.display='none';
-    renderToday();renderTasks();renderHabits();scheduleDigests();
+    renderToday();renderTasks();renderHabits();scheduleDigests();initOneSignal();
   }catch(e){
     el.textContent='Error: '+e.message+' — tap to retry';
     document.getElementById('loading-screen').onclick=()=>{el.textContent='Retrying...';init();};
@@ -582,8 +574,8 @@ async function deleteConvo(contactId,convoId){const contact=contacts.find(c=>c.i
 function openAddContactModal(){document.getElementById('contact-modal-title').textContent='Add Person';document.getElementById('edit-contact-id').value='';['contact-name','contact-role'].forEach(id=>document.getElementById(id).value='');document.getElementById('contact-cadence').value='14';document.getElementById('modal-contact').classList.add('open');}
 function openEditContact(id){const c=contacts.find(x=>x.id===id);document.getElementById('contact-modal-title').textContent='Edit Person';document.getElementById('edit-contact-id').value=id;document.getElementById('contact-name').value=c.name;document.getElementById('contact-client').value=c.client;document.getElementById('contact-role').value=c.role||'';document.getElementById('contact-cadence').value=c.cadenceDays||'';document.getElementById('modal-contact').classList.add('open');}
 async function saveContact(){const name=document.getElementById('contact-name').value.trim();if(!name)return;const editId=document.getElementById('edit-contact-id').value;const data={name,client:document.getElementById('contact-client').value,role:document.getElementById('contact-role').value.trim(),cadence_days:document.getElementById('contact-cadence').value?Number(document.getElementById('contact-cadence').value):null};if(editId){const c=contacts.find(x=>x.id===editId);Object.assign(c,{...data,cadenceDays:data.cadence_days});await PATCH('contacts',data,`?id=eq.${editId}`);showToast('Updated');}else{const nc={id:'ct'+Date.now(),...data};contacts.push({...nc,cadenceDays:data.cadence_days,conversations:[]});await POST('contacts',[nc]);showToast('Contact added');}renderContacts();closeModal('modal-contact');}
-function loadSettings(){document.getElementById('settings-anthropic-key').value=settings.anthropicKey||'';document.getElementById('settings-resend-key').value=settings.resendKey||'';document.getElementById('settings-email1').value=settings.email1||'';document.getElementById('settings-email2').value=settings.email2||'';document.getElementById('settings-morning-time').value=settings.morningTime||'08:00';document.getElementById('settings-evening-time').value=settings.eveningTime||'22:00';}
-function saveSettings(){settings.anthropicKey=document.getElementById('settings-anthropic-key').value.trim();settings.resendKey=document.getElementById('settings-resend-key').value.trim();settings.email1=document.getElementById('settings-email1').value.trim();settings.email2=document.getElementById('settings-email2').value.trim();settings.morningTime=document.getElementById('settings-morning-time').value;settings.eveningTime=document.getElementById('settings-evening-time').value;try{localStorage.setItem('cc-settings',JSON.stringify(settings));}catch(e){}document.getElementById('settings-status').textContent='✓ Settings saved';setTimeout(()=>document.getElementById('settings-status').textContent='',2000);showToast('Settings saved');}
+function loadSettings(){document.getElementById('settings-anthropic-key').value=settings.anthropicKey||'';document.getElementById('settings-onesignal-id').value=settings.onesignalId||'';document.getElementById('settings-resend-key').value=settings.resendKey||'';document.getElementById('settings-email1').value=settings.email1||'';document.getElementById('settings-email2').value=settings.email2||'';document.getElementById('settings-morning-time').value=settings.morningTime||'08:00';document.getElementById('settings-evening-time').value=settings.eveningTime||'22:00';}
+function saveSettings(){settings.anthropicKey=document.getElementById('settings-anthropic-key').value.trim();settings.onesignalId=document.getElementById('settings-onesignal-id').value.trim();settings.resendKey=document.getElementById('settings-resend-key').value.trim();settings.email1=document.getElementById('settings-email1').value.trim();settings.email2=document.getElementById('settings-email2').value.trim();settings.morningTime=document.getElementById('settings-morning-time').value;settings.eveningTime=document.getElementById('settings-evening-time').value;try{localStorage.setItem('cc-settings',JSON.stringify(settings));}catch(e){}document.getElementById('settings-status').textContent='✓ Settings saved';setTimeout(()=>document.getElementById('settings-status').textContent='',2000);showToast('Settings saved');}
 async function buildDigestHTML(type){
   const all=allTasks();const todayStr=today();
   const overdue=all.filter(t=>!t.done&&t.due&&daysUntil(t.due)<0);
@@ -625,7 +617,7 @@ async function sendDigest(type){
   }catch(e){showToast('Email failed — check Resend key in Settings');}
 }
 async function sendTestDigest(){saveSettings();await sendDigest('evening');}
-function scheduleDigests(){
+function initOneSignal(){   const id=settings.onesignalId;   if(!id)return;   const s=document.createElement('script');   s.src='https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js';   s.defer=true;   document.head.appendChild(s);   window.OneSignalDeferred=window.OneSignalDeferred||[];   OneSignalDeferred.push(async function(OneSignal){     await OneSignal.init({appId:id,notifyButton:{enable:false}});     await OneSignal.Notifications.requestPermission();   }); }
   setInterval(()=>{
     const now=new Date();
     const timeStr=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
